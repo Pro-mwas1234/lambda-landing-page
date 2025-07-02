@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | Lambda Studies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "index.html";
+      } else {
+        document.getElementById('welcome').innerText = `Welcome back, ${user.email}`;
+      }
+    });
+  </script>
+</head>
+<body class="bg-gray-50 p-8">
+  <div class="max-w-xl mx-auto bg-white shadow p-6 rounded-xl text-center">
+    <h1 id="welcome" class="text-2xl font-bold text-emerald-600 mb-4">Welcome</h1>
+    <p class="text-gray-700 mb-6">This is your dashboard. You can customize it later with stats, lessons, or links.</p>
+    <button id="logout-btn" class="bg-emerald-600 text-white py-2 px-4 rounded hover:bg-emerald-700">
+      Log Out
+    </button>
+  </div>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
