@@ -1,3 +1,9 @@
+// firebase-config.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+
+const firebaseConfig = {
 const firebaseConfig = {
   apiKey: "AIzaSyDNRsHeUNRQjDFCrd9PX3XIWq5DGZkkYJU",
   authDomain: "lambda-df556.firebaseapp.com",
@@ -8,10 +14,8 @@ const firebaseConfig = {
   measurementId: "G-RGF9WFSJE7"
 };
 
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
 
-firebase.initializeApp(firebaseConfig);
-
-// Example of saving user info:
-function saveUserData(uid, data) {
-  firebase.database().ref('users/' + uid).set(data);
-}
+export { auth, database };
