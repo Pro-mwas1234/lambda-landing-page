@@ -1,33 +1,922 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard | Lambda Studies</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module">
-    import { auth } from './firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
-
-    onAuthStateChanged(auth, user => {
-      if (!user) {
-        window.location.href = "index.html";
-      } else {
-        document.getElementById('welcome').innerText = `Welcome back, ${user.email}`;
-      }
-    });
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lambda Studies Center - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(22, 163, 74, 0.1);
+        }
+        .sidebar-item.active {
+            background-color: rgba(22, 163, 74, 0.2);
+            border-left: 4px solid #16a34a;
+        }
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .book-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 p-8">
-  <div class="max-w-xl mx-auto bg-white shadow p-6 rounded-xl text-center">
-    <h1 id="welcome" class="text-2xl font-bold text-emerald-600 mb-4">Welcome</h1>
-    <p class="text-gray-700 mb-6">This is your dashboard. You can customize it later with stats, lessons, or links.</p>
-    <button id="logout-btn" class="bg-emerald-600 text-white py-2 px-4 rounded hover:bg-emerald-700">
-      Log Out
-    </button>
-  </div>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="hidden md:flex md:flex-shrink-0">
+            <div class="flex flex-col w-64 bg-white border-r border-gray-200">
+                <div class="flex items-center justify-center h-16 px-4 bg-green-600">
+                    <div class="flex items-center">
+                        <i class="fas fa-graduation-cap text-white text-2xl mr-2"></i>
+                        <span class="text-white font-bold text-xl">Lambda Studies</span>
+                    </div>
+                </div>
+                <div class="p-4 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <img class="w-10 h-10 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($user['username']); ?></p>
+                            <p class="text-xs font-medium text-gray-500">Student</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+                    <div class="space-y-1">
+                        <a href="#home" class="sidebar-item active flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-home mr-3 text-green-600"></i>
+                            Home
+                        </a>
+                        <a href="#books" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-book mr-3 text-green-600"></i>
+                            Books
+                        </a>
+                        <a href="https://quiz.learning.zeraki.co.ke/#/login" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-laptop-code mr-3 text-green-600"></i>
+                            Zeraki
+                        </a>
+                        <a href="#test-papers" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-file-alt mr-3 text-green-600"></i>
+                            Test Papers
+                        </a>
+                        <a href="#test-yourself" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-question-circle mr-3 text-green-600"></i>
+                            Test Yourself
+                        </a>
+                        <a href="#about" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-info-circle mr-3 text-green-600"></i>
+                            About
+                        </a>
+                        <a href="#logout" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-sign-out-alt mr-3 text-green-600"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <script type="module" src="auth.js"></script>
+        <!-- Mobile sidebar -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+            <div class="flex justify-around">
+                <a href="#home" class="flex flex-col items-center justify-center p-3 text-green-600">
+                    <i class="fas fa-home"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="#books" class="flex flex-col items-center justify-center p-3 text-gray-500">
+                    <i class="fas fa-book"></i>
+                    <span class="text-xs mt-1">Books</span>
+                </a>
+                <a href="#test-yourself" class="flex flex-col items-center justify-center p-3 text-gray-500">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="text-xs mt-1">Test</span>
+                </a>
+                <a href="#logout" class="flex flex-col items-center justify-center p-3 text-gray-500">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="text-xs mt-1">Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top navigation -->
+            <div class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200">
+                <div class="flex items-center md:hidden">
+                    <button class="text-gray-500 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative">
+                        <input type="text" class="w-full md:w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Search...">
+                        <div class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button class="p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="ml-2 p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main content area -->
+            <div class="flex-1 overflow-auto p-4">
+                <!-- Home Section -->
+                <section id="home" class="mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-user-circle text-green-600 mr-2"></i>
+                            Student Profile
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Profile Card -->
+                            <div class="bg-white rounded-lg shadow p-6 col-span-1">
+                                <div class="flex flex-col items-center">
+                                    <img class="w-24 h-24 rounded-full mb-4" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
+                                    <h3 class="text-xl font-bold text-gray-800">John Doe</h3>
+                                    <p class="text-gray-600 mb-2">Grade 12 Student</p>
+                                    <div class="flex space-x-2 mb-4">
+                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Active</span>
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Premium</span>
+                                    </div>
+                                    <div class="w-full border-t border-gray-200 my-4"></div>
+                                    <div class="grid grid-cols-2 gap-4 w-full">
+                                        <div class="text-center">
+                                            <p class="text-gray-500 text-sm">Courses</p>
+                                            <p class="font-bold text-green-600">8</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-gray-500 text-sm">Tests Taken</p>
+                                            <p class="font-bold text-green-600">24</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Performance Graph -->
+                            <div class="bg-white rounded-lg shadow p-6 col-span-2">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-line text-green-600 mr-2"></i>
+                                    Performance Trend
+                                </h3>
+                                <div class="h-64">
+                                    <canvas id="performanceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Subjects Section -->
+                        <div class="mt-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-book-open text-green-600 mr-2"></i>
+                                Available Subjects
+                            </h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                <!-- Mathematics -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-square-root-alt text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Mathematics</h4>
+                                </div>
+                                
+                                <!-- English -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-language text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">English</h4>
+                                </div>
+                                
+                                <!-- Kiswahili -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-globe-africa text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Kiswahili</h4>
+                                </div>
+                                
+                                <!-- Biology -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-dna text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Biology</h4>
+                                </div>
+                                
+                                <!-- Physics -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-atom text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Physics</h4>
+                                </div>
+                                
+                                <!-- Chemistry -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-flask text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Chemistry</h4>
+                                </div>
+                                
+                                <!-- CRE -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-church text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">CRE</h4>
+                                </div>
+                                
+                                <!-- Geography -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-globe-americas text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Geography</h4>
+                                </div>
+                                
+                                <!-- History -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-landmark text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">History</h4>
+                                </div>
+                                
+                                <!-- Business Studies -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Business Studies</h4>
+                                </div>
+                                
+                                <!-- Computer Studies -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-laptop-code text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Computer Studies</h4>
+                                </div>
+                                
+                                <!-- Agriculture -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-tractor text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Agriculture</h4>
+                                </div>
+                                
+                                <!-- Home Science -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-home text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">Home Science</h4>
+                                </div>
+                                
+                                <!-- French -->
+                                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
+                                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-flag text-green-600 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800">French</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Books Section -->
+                <section id="books" class="mb-8 hidden">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-book text-green-600 mr-2"></i>
+                            Available Books
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <!-- Book 1 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Mathematics Form 1</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By John Smith</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 850</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 2 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">English Grammar Guide</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Sarah Johnson</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 750</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 3 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Biology Form 4</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Dr. James Wilson</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 950</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 4 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Physics Made Easy</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Prof. Robert Brown</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 900</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 5 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Chemistry Form 3</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Dr. Emily Davis</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 850</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 6 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Geography of Africa</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Michael Taylor</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 700</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 7 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">History of Kenya</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Prof. William Clark</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 800</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 8 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Business Studies Guide</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Richard Anderson</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 750</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 9 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Computer Studies Form 2</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By David Miller</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 900</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Book 10 -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="bg-green-100 h-40 flex items-center justify-center">
+                                    <i class="fas fa-book-open text-green-600 text-5xl"></i>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg text-gray-800 mb-1">Agriculture Handbook</h3>
+                                    <p class="text-gray-600 text-sm mb-2">By Thomas Wilson</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-600 font-bold">KSh 650</span>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Zeraki Section -->
+                <section id="zeraki" class="mb-8 hidden">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-laptop-code text-green-600 mr-2"></i>
+                            Zeraki Analytics
+                        </h2>
+                        <div class="bg-green-50 rounded-lg p-6 mb-6">
+                            <div class="flex items-center">
+                                <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                                    <i class="fas fa-chart-pie text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800">Performance Analytics</h3>
+                                    <p class="text-gray-600">Track your academic progress with Zeraki's advanced analytics tools</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="font-bold text-lg text-gray-800 mb-4">Subject Analysis</h3>
+                                <div class="h-64">
+                                    <canvas id="subjectChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="font-bold text-lg text-gray-800 mb-4">Trend Comparison</h3>
+                                <div class="h-64">
+                                    <canvas id="comparisonChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Test Papers Section -->
+                <section id="test-papers" class="mb-8 hidden">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-file-alt text-green-600 mr-2"></i>
+                            Test Papers
+                        </h2>
+                        
+                        <!-- Form Selection -->
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <button class="form-filter px-4 py-2 rounded-lg bg-green-600 text-white" data-form="1">Form 1</button>
+                            <button class="form-filter px-4 py-2 rounded-lg bg-gray-200 text-gray-800" data-form="2">Form 2</button>
+                            <button class="form-filter px-4 py-2 rounded-lg bg-gray-200 text-gray-800" data-form="3">Form 3</button>
+                            <button class="form-filter px-4 py-2 rounded-lg bg-gray-200 text-gray-800" data-form="4">Form 4</button>
+                        </div>
+
+                        <!-- Subject Selection (shown after selecting form) -->
+                        <div id="subject-selection" class="hidden mb-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3">Select Subject</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <button class="subject-filter px-3 py-1 rounded-lg bg-gray-200 text-gray-800">Mathematics</button>
+                                <button class="subject-filter px-3 py-1 rounded-lg bg-gray-200 text-gray-800">English</button>
+                                <button class="subject-filter px-3 py-1 rounded-lg bg-gray-200 text-gray-800">Kiswahili</button>
+                                <button class="subject-filter px-3 py-1 rounded-lg bg-gray-200 text-gray-800">Biology</button>
+                                <button class="subject-filter px-3 py-1 rounded-lg bg-gray-200 text-gray-800">Chemistry</button>
+                                <button class="subject-filter px-3 py-1 rounded-lg bg-gray-200 text-gray-800">Physics</button>
+                            </div>
+                        </div>
+
+                        <!-- Papers Display Area -->
+                        <div id="papers-display" class="hidden">
+                            <h3 id="papers-title" class="text-xl font-bold text-gray-800 mb-4"></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Papers will be dynamically inserted here -->
+                            </div>
+                        </div>
+
+                        <!-- Sample Paper Template (hidden) -->
+                        <template id="paper-template">
+                            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                                <h3 class="font-bold text-lg text-gray-800 mb-2"></h3>
+                                <p class="text-gray-600 text-sm mb-4"></p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-green-600 font-bold"></span>
+                                    <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Start Test</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const formFilters = document.querySelectorAll('.form-filter');
+                        const subjectSelection = document.getElementById('subject-selection');
+                        const papersDisplay = document.getElementById('papers-display');
+                        const papersTitle = document.getElementById('papers-title');
+                        const paperTemplate = document.getElementById('paper-template');
+                        
+                        // Sample data - in a real app this would come from a database
+                        const papersData = {
+                            '1': {
+                                'Mathematics': [
+                                    { title: 'Mathematics Term 1', year: '2023', questions: 30 },
+                                    { title: 'Mathematics Term 2', year: '2023', questions: 35 }
+                                ],
+                                'English': [
+                                    { title: 'English Paper 1', year: '2023', questions: 25 },
+                                    { title: 'English Paper 2', year: '2023', questions: 20 }
+                                ]
+                            },
+                            '2': {
+                                'Mathematics': [
+                                    { title: 'Mathematics Term 1', year: '2023', questions: 30 }
+                                ],
+                                'Biology': [
+                                    { title: 'Biology Paper 1', year: '2023', questions: 40 }
+                                ]
+                            },
+                            '3': {
+                                'English': [
+                                    { title: 'English Paper 1', year: '2023', questions: 25 }
+                                ],
+                                'Chemistry': [
+                                    { title: 'Chemistry Paper 1', year: '2023', questions: 35 }
+                                ]
+                            },
+                            '4': {
+                                'Mathematics': [
+                                    { title: 'Mathematics Term 1', year: '2023', questions: 30 },
+                                    { title: 'Mathematics Term 2', year: '2023', questions: 35 },
+                                    { title: 'Mathematics Term 3', year: '2023', questions: 40 }
+                                ],
+                                'Physics': [
+                                    { title: 'Physics Paper 1', year: '2023', questions: 30 },
+                                    { title: 'Physics Paper 2', year: '2023', questions: 35 }
+                                ]
+                            }
+                        };
+
+                        // Form filter click handler
+                        formFilters.forEach(button => {
+                            button.addEventListener('click', function() {
+                                // Update active form button
+                                formFilters.forEach(btn => {
+                                    btn.classList.remove('bg-green-600', 'text-white');
+                                    btn.classList.add('bg-gray-200', 'text-gray-800');
+                                });
+                                this.classList.remove('bg-gray-200', 'text-gray-800');
+                                this.classList.add('bg-green-600', 'text-white');
+
+                                // Show subject selection
+                                subjectSelection.classList.remove('hidden');
+                                papersDisplay.classList.add('hidden');
+                            });
+                        });
+
+                        // Subject filter click handler
+                        document.querySelectorAll('.subject-filter').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const form = document.querySelector('.form-filter.bg-green-600').dataset.form;
+                                const subject = this.textContent;
+                                
+                                // Update papers title
+                                papersTitle.textContent = `Form ${form} ${subject} Papers`;
+                                
+                                // Clear previous papers
+                                papersDisplay.querySelector('.grid').innerHTML = '';
+                                
+                                // Add papers for selected form and subject
+                                if (papersData[form] && papersData[form][subject]) {
+                                    papersData[form][subject].forEach(paper => {
+                                        const clone = paperTemplate.content.cloneNode(true);
+                                        clone.querySelector('h3').textContent = paper.title;
+                                        clone.querySelector('p').textContent = `Form ${form} - ${paper.year}`;
+                                        clone.querySelector('span').textContent = `${paper.questions} Questions`;
+                                        papersDisplay.querySelector('.grid').appendChild(clone);
+                                    });
+                                }
+                                
+                                // Show papers display
+                                papersDisplay.classList.remove('hidden');
+                            });
+                        });
+                    });
+                </script>
+
+                <!-- Test Yourself Section -->
+                <section id="test-yourself" class="mb-8 hidden">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-question-circle text-green-600 mr-2"></i>
+                            Test Yourself
+                        </h2>
+                        <div class="bg-green-50 rounded-lg p-6 mb-6">
+                            <div class="flex items-center">
+                                <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                                    <i class="fas fa-brain text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800">Practice Makes Perfect</h3>
+                                    <p class="text-gray-600">Test your knowledge with our interactive quizzes and track your progress</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="font-bold text-lg text-gray-800 mb-4">Quick Quiz</h3>
+                                <p class="text-gray-600 mb-4">Take a 10-question quiz on any subject</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Mathematics</button>
+                                    <button class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">English</button>
+                                    <button class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Biology</button>
+                                    <button class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Chemistry</button>
+                                </div>
+                                <button class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full">Start Quiz</button>
+                            </div>
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="font-bold text-lg text-gray-800 mb-4">Exam Simulation</h3>
+                                <p class="text-gray-600 mb-4">Simulate a full exam experience with timed tests</p>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock text-green-600 mr-2"></i>
+                                        <span>Timed tests (2-3 hours)</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-certificate text-green-600 mr-2"></i>
+                                        <span>Certification available</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-chart-bar text-green-600 mr-2"></i>
+                                        <span>Detailed performance analysis</span>
+                                    </div>
+                                </div>
+                                <button class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full">Start Simulation</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- About Section -->
+                <section id="about" class="mb-8 hidden">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-info-circle text-green-600 mr-2"></i>
+                            About Lambda Studies Center
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800 mb-3">Our Mission</h3>
+                                <p class="text-gray-600 mb-4">
+                                    Lambda Studies Center is dedicated to providing high-quality educational resources to students across Kenya. 
+                                    Our mission is to make learning accessible, engaging, and effective through innovative digital solutions.
+                                </p>
+                                <div class="bg-green-50 rounded-lg p-4 mb-4">
+                                    <div class="flex items-center">
+                                        <div class="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                                            <i class="fas fa-users text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">10,000+ Students</h4>
+                                            <p class="text-gray-600 text-sm">Trust our platform</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                                            <i class="fas fa-book text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-gray-800">500+ Resources</h4>
+                                            <p class="text-gray-600 text-sm">Available for learning</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800 mb-3">Our Team</h3>
+                                <p class="text-gray-600 mb-4">
+                                    We are a team of passionate educators, technologists, and designers committed to transforming education 
+                                    in Kenya. Our experts come with years of experience in curriculum development and educational technology.
+                                </p>
+                                <div class="flex space-x-4">
+                                    <div class="text-center">
+                                        <img class="w-16 h-16 rounded-full mx-auto mb-2" src="https://randomuser.me/api/portraits/women/32.jpg" alt="Team member">
+                                        <p class="font-medium text-gray-800">Dr. Sarah M.</p>
+                                        <p class="text-gray-600 text-xs">Education Director</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <img class="w-16 h-16 rounded-full mx-auto mb-2" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Team member">
+                                        <p class="font-medium text-gray-800">James K.</p>
+                                        <p class="text-gray-600 text-xs">Technology Lead</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <img class="w-16 h-16 rounded-full mx-auto mb-2" src="https://randomuser.me/api/portraits/women/65.jpg" alt="Team member">
+                                        <p class="font-medium text-gray-800">Grace W.</p>
+                                        <p class="text-gray-600 text-xs">Content Manager</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Logout Section -->
+                <section id="logout" class="mb-8 hidden">
+                    <div class="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
+                        <div class="text-center">
+                            <div class="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-sign-out-alt text-green-600 text-3xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Logout</h2>
+                            <p class="text-gray-600 mb-6">Are you sure you want to logout from Lambda Studies Center?</p>
+                            <div class="flex space-x-4 justify-center">
+                                <button class="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300">Cancel</button>
+                                <button class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show home section by default
+            document.querySelector('#home').classList.remove('hidden');
+            
+            // Handle sidebar navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Hide all sections
+                    document.querySelectorAll('section').forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    
+                    // Show the selected section
+                    const target = this.getAttribute('href');
+                    document.querySelector(target).classList.remove('hidden');
+                });
+            });
+            
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            const performanceChart = new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Average Score',
+                        data: [65, 59, 70, 71, 66, 75, 80, 78, 82, 85, 88, 90],
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 50,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Subject Chart for Zeraki
+            const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+            const subjectChart = new Chart(subjectCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Math', 'English', 'Biology', 'Physics', 'Chemistry', 'History'],
+                    datasets: [{
+                        label: 'Your Scores',
+                        data: [85, 78, 92, 80, 88, 75],
+                        backgroundColor: '#16a34a',
+                        borderColor: '#16a34a',
+                        borderWidth: 1
+                    }, {
+                        label: 'Class Average',
+                        data: [72, 75, 80, 68, 76, 70],
+                        backgroundColor: '#d1fae5',
+                        borderColor: '#d1fae5',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Comparison Chart for Zeraki
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            const comparisonChart = new Chart(comparisonCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Term 1', 'Term 2', 'Term 3'],
+                    datasets: [{
+                        label: 'Your Progress',
+                        data: [65, 75, 85],
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Top Student',
+                        data: [85, 88, 92],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 50,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
