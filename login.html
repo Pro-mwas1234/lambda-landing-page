@@ -4,18 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up/Log In | Lambda Studies Center</title>
-
-
-    
     <!-- Firebase App (the core Firebase SDK) is always required -->
     <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
     <!-- Firebase Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Our Firebase functions -->
-    <script src="firebase-config.js" defer></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -117,187 +111,193 @@
                     </div>
                     
                     <!-- Sign Up Form -->
-                    <div id="signup-form" class="form-content">
+                    <form id="signup-form" class="form-content">
                         <div class="flex items-center mb-6">
                             <i class="fas fa-graduation-cap text-3xl text-emerald-600 mr-3"></i>
                             <h2 class="text-2xl font-bold text-gray-800">Create Your Account</h2>
                         </div>
                         
-                        <form>
-                            <div class="mb-4">
-                                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-user text-gray-400"></i>
-                                    </div>
-                                    <input type="text" id="username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter username">
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
                                 </div>
+                                <input type="text" id="username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter username" required>
                             </div>
-                            
-                            <div class="mb-4">
-                                <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-id-card text-gray-400"></i>
-                                    </div>
-                                    <input type="text" id="fullname" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter full name">
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-envelope text-gray-400"></i>
-                                    </div>
-                                    <input type="email" id="email" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter email address" required>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="form" class="block text-sm font-medium text-gray-700 mb-1">Form</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-layer-group text-gray-400"></i>
-                                    </div>
-                                    <select id="form" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500">
-                                        <option value="">Select your form</option>
-                                        <option value="form1">Form 1</option>
-                                        <option value="form2">Form 2</option>
-                                        <option value="form3">Form 3</option>
-                                        <option value="form4">Form 4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                                <div class="flex gap-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="gender" value="male" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
-                                        <span class="ml-2 text-gray-700"><i class="fas fa-mars mr-1"></i> Male</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="gender" value="female" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
-                                        <span class="ml-2 text-gray-700"><i class="fas fa-venus mr-1"></i> Female</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="zeraki-check" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
-                                    <label for="zeraki-check" class="ml-2 block text-sm text-gray-700">
-                                        My school is recognized by Zeraki Learning
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div id="zeraki-fields" class="hidden space-y-4 pl-6 border-l-2 border-emerald-200 mt-2 mb-4">
-                                <div>
-                                    <label for="zeraki-username" class="block text-sm font-medium text-gray-700 mb-1">Zeraki Username</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-at text-gray-400"></i>
-                                        </div>
-                                        <input type="text" id="zeraki-username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter Zeraki username">
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label for="zeraki-password" class="block text-sm font-medium text-gray-700 mb-1">Zeraki Password</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-key text-gray-400"></i>
-                                        </div>
-                                        <input type="password" id="zeraki-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter Zeraki password">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-lock text-gray-400"></i>
-                                    </div>
-                                    <input type="password" id="password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter password">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-6">
-                                <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-lock text-gray-400"></i>
-                                    </div>
-                                    <input type="password" id="confirm-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Confirm password">
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                                <i class="fas fa-user-plus mr-2"></i> Create Account
-                            </button>
-                        </form>
-                        
-                        <div class="mt-4 text-center text-sm text-gray-600">
-                            Already have an account? <button class="switch-to-login text-emerald-600 font-medium hover:underline">Log in here</button>
                         </div>
+                        
+                        <div class="mb-4">
+                            <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-id-card text-gray-400"></i>
+                                </div>
+                                <input type="text" id="fullname" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter full name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" id="email" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter email address" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="form" class="block text-sm font-medium text-gray-700 mb-1">Form</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-layer-group text-gray-400"></i>
+                                </div>
+                                <select id="form" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" required>
+                                    <option value="">Select your form</option>
+                                    <option value="form1">Form 1</option>
+                                    <option value="form2">Form 2</option>
+                                    <option value="form3">Form 3</option>
+                                    <option value="form4">Form 4</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                            <div class="flex gap-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" value="male" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500" required>
+                                    <span class="ml-2 text-gray-700"><i class="fas fa-mars mr-1"></i> Male</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" value="female" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500" required>
+                                    <span class="ml-2 text-gray-700"><i class="fas fa-venus mr-1"></i> Female</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="zeraki-check" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
+                                <label for="zeraki-check" class="ml-2 block text-sm text-gray-700">
+                                    My school is recognized by Zeraki Learning
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="zeraki-fields" class="hidden space-y-4 pl-6 border-l-2 border-emerald-200 mt-2 mb-4">
+                            <div>
+                                <label for="zeraki-username" class="block text-sm font-medium text-gray-700 mb-1">Zeraki Username</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-at text-gray-400"></i>
+                                    </div>
+                                    <input type="text" id="zeraki-username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter Zeraki username">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="zeraki-password" class="block text-sm font-medium text-gray-700 mb-1">Zeraki Password</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-key text-gray-400"></i>
+                                    </div>
+                                    <input type="password" id="zeraki-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter Zeraki password">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="confirm-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Confirm password" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-user-plus mr-2"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4 text-center text-sm text-gray-600">
+                        Already have an account? <button class="switch-to-login text-emerald-600 font-medium hover:underline">Log in here</button>
                     </div>
                     
                     <!-- Login Form -->
-                    <div id="login-form" class="form-content hidden">
+                    <form id="login-form" class="form-content hidden">
                         <div class="flex items-center mb-6">
                             <i class="fas fa-sign-in-alt text-3xl text-emerald-600 mr-3"></i>
                             <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
                         </div>
                         
-                        <form>
-                            <div class="mb-4">
-                                <label for="login-username" class="block text-sm font-medium text-gray-700 mb-1">Username or Email</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-user text-gray-400"></i>
-                                    </div>
-                                    <input type="text" id="login-username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter username or email">
+                        <div class="mb-4">
+                            <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
                                 </div>
+                                <input type="email" id="login-email" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter email address" required>
                             </div>
-                            
-                            <div class="mb-4">
-                                <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-lock text-gray-400"></i>
-                                    </div>
-                                    <input type="password" id="login-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter password">
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between mb-6">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="remember-me" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
-                                    <label for="remember-me" class="ml-2 block text-sm text-gray-700">
-                                        Keep me logged in
-                                    </label>
-                                </div>
-                                
-                                <a href="#" class="text-sm text-emerald-600 hover:underline">Forgot password?</a>
-                            </div>
-                            
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                                <i class="fas fa-sign-in-alt mr-2"></i> Log In
-                            </button>
-                        </form>
-                        
-                        <div class="mt-4 text-center text-sm text-gray-600">
-                            Don't have an account? <button class="switch-to-signup text-emerald-600 font-medium hover:underline">Sign up here</button>
                         </div>
+                        
+                        <div class="mb-4">
+                            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="login-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember-me" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
+                                <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                                    Keep me logged in
+                                </label>
+                            </div>
+                            
+                            <button type="button" onclick="resetPassword()" class="text-sm text-emerald-600 hover:underline">Forgot password?</button>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i> Log In
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4 text-center text-sm text-gray-600">
+                        Don't have an account? <button class="switch-to-signup text-emerald-600 font-medium hover:underline">Sign up here</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Authentication Logic -->
+    <script src="auth.js"></script>
+    
+    <!-- Database Logic -->
+    <script src="database.js"></script>
+    
+    <!-- UI Scripts (Carousel and Tabs) -->
     <script>
         // Tab switching functionality
         const signupTab = document.getElementById('signup-tab');
