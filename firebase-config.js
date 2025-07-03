@@ -1,9 +1,3 @@
-// firebase-config.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
-
-const firebaseConfig = {
 const firebaseConfig = {
   apiKey: "AIzaSyDNRsHeUNRQjDFCrd9PX3XIWq5DGZkkYJU",
   authDomain: "lambda-df556.firebaseapp.com",
@@ -14,8 +8,9 @@ const firebaseConfig = {
   measurementId: "G-RGF9WFSJE7"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
-export { auth, database };
+// Reference to Firebase Auth and Database
+const auth = firebase.auth();
+const database = firebase.database();
