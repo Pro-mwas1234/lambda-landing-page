@@ -254,65 +254,181 @@
     <script src="database.js"></script>
     
     <!-- UI Scripts -->
-    <script>
-        // Tab switching functionality
-        const signupTab = document.getElementById('signup-tab');
-        const loginTab = document.getElementById('login-tab');
-        const signupForm = document.getElementById('signup-form');
-        const loginForm = document.getElementById('login-form');
-        
-        signupTab.addEventListener('click', () => {
-            signupTab.classList.add('text-emerald-600', 'border-emerald-600');
-            signupTab.classList.remove('text-gray-500', 'border-transparent');
-            loginTab.classList.add('text-gray-500', 'border-transparent');
-            loginTab.classList.remove('text-emerald-600', 'border-emerald-600');
-            signupForm.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-        });
-        
-        loginTab.addEventListener('click', () => {
-            loginTab.classList.add('text-emerald-600', 'border-emerald-600');
-            loginTab.classList.remove('text-gray-500', 'border-transparent');
-            signupTab.classList.add('text-gray-500', 'border-transparent');
-            signupTab.classList.remove('text-emerald-600', 'border-emerald-600');
-            loginForm.classList.remove('hidden');
-            signupForm.classList.add('hidden');
-        });
-        
-        // Quick switch links
-        document.querySelectorAll('.switch-to-login').forEach(btn => {
-            btn.addEventListener('click', () => {
-                loginTab.click();
+<script>
+    // Check authentication state when dashboard loads
+    auth.onAuthStateChanged((user) => {
+        if (!user) {
+            // User not logged in, redirect to login
+            window.location.href = "login.html";
+        } else {
+            // User is logged in, load their data
+            loadUserData(user.uid);
+            initializeDashboard();
+        }
+    });
+
+    // Load user data
+    function loadUserData(userId) {
+        database.ref('users/' + userId).once('value')
+            .then((snapshot) => {
+                const userData = snapshot.val();
+                if (userData) {
+                    // Update profile information
+                    document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
+                    document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form.substring(4)}` : 'Not specified';
+                    document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form.substring(4)}` : 'Not specified';
+                    document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
+                    
+                    // Update avatar
+                    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=10b981&color=fff`;
+                    document.getElementById('user-avatar').src = avatarUrl;
+                    document.getElementById('profile-avatar').src = avatarUrl;
+                }
+            })
+            .catch((error) => {
+                console.error("Error loading user data:", error);
             });
-        });
-        
-        document.querySelectorAll('.switch-to-signup').forEach(btn => {
-            btn.addEventListener('click', () => {
-                signupTab.click();
-            });
-        });
-        
-        // Zeraki checkbox toggle
-        const zerakiCheck = document.getElementById('zeraki-check');
-        const zerakiFields = document.getElementById('zeraki-fields');
-        
-        zerakiCheck.addEventListener('change', () => {
-            if (zerakiCheck.checked) {
-                zerakiFields.classList.remove('hidden');
-            } else {
-                zerakiFields.classList.add('hidden');
+    }
+
+    // Initialize dashboard components
+    function initializeDashboard() {
+        // Initialize chart
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [65, 59, 70, 71, 76, 78],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 50,
+                        max: 100
+                    }
+                }
             }
         });
-        
-        // Toggle password visibility
-        const togglePassword = document.getElementById('toggle-password');
-        const passwordField = document.getElementById('login-password');
-        
-        togglePassword.addEventListener('click', () => {
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            togglePassword.innerHTML = type === 'password' ? '<i class="far fa-eye"></i>' : '<i class="far fa-eye-slash"></i>';
+
+        // Sidebar toggle
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
         });
-    </script>
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+
+        // Logout functionality
+        document.querySelector('.logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            auth.signOut()
+                .then(() => {
+                    window.location.href = "login.html";
+                });
+        });
+    }
+
+    // Show section function
+    function showSection(sectionId, event) {
+        if (event) event.preventDefault();
+        
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show the selected section
+        const section = document.getElementById(sectionId);
+        section.classList.add('active');
+        
+        // Update section title
+        const title = section.querySelector('h1')?.textContent || 'Dashboard';
+        document.getElementById('current-section-title').textContent = title;
+        
+        // Update active nav item
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('bg-green-600');
+        });
+        
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('bg-green-600');
+        }
+    }
+</script>
+3. Updated login.html (only the script section):
+javascript
+<script>
+    // Tab switching functionality
+    const signupTab = document.getElementById('signup-tab');
+    const loginTab = document.getElementById('login-tab');
+    const signupForm = document.getElementById('signup-form');
+    const loginForm = document.getElementById('login-form');
+    
+    signupTab.addEventListener('click', () => {
+        signupTab.classList.add('text-emerald-600', 'border-emerald-600');
+        signupTab.classList.remove('text-gray-500', 'border-transparent');
+        loginTab.classList.add('text-gray-500', 'border-transparent');
+        loginTab.classList.remove('text-emerald-600', 'border-emerald-600');
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+    });
+    
+    loginTab.addEventListener('click', () => {
+        loginTab.classList.add('text-emerald-600', 'border-emerald-600');
+        loginTab.classList.remove('text-gray-500', 'border-transparent');
+        signupTab.classList.add('text-gray-500', 'border-transparent');
+        signupTab.classList.remove('text-emerald-600', 'border-emerald-600');
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+    });
+    
+    // Quick switch links
+    document.querySelectorAll('.switch-to-login').forEach(btn => {
+        btn.addEventListener('click', () => {
+            loginTab.click();
+        });
+    });
+    
+    document.querySelectorAll('.switch-to-signup').forEach(btn => {
+        btn.addEventListener('click', () => {
+            signupTab.click();
+        });
+    });
+    
+    // Zeraki checkbox toggle
+    const zerakiCheck = document.getElementById('zeraki-check');
+    const zerakiFields = document.getElementById('zeraki-fields');
+    
+    zerakiCheck.addEventListener('change', () => {
+        if (zerakiCheck.checked) {
+            zerakiFields.classList.remove('hidden');
+        } else {
+            zerakiFields.classList.add('hidden');
+        }
+    });
+    
+    // Toggle password visibility
+    const togglePassword = document.getElementById('toggle-password');
+    const passwordField = document.getElementById('login-password');
+    
+    togglePassword.addEventListener('click', () => {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        togglePassword.innerHTML = type === 'password' ? '<i class="far fa-eye"></i>' : '<i class="far fa-eye-slash"></i>';
+    });
+</script>
 </body>
 </html>
