@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +14,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-@@ -23,21 +17,6 @@
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .form-container {
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
@@ -34,7 +42,13 @@
         .input-highlight {
             transition: all 0.3s ease;
             border-color: #10b981;
-@@ -51,69 +30,89 @@
+        }
+
+        .input-highlight:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
 <body class="min-h-screen bg-gray-50">
     <div class="container mx-auto px-4 py-8">
         <div class="flex flex-col lg:flex-row items-center justify-center gap-12">
@@ -170,7 +184,102 @@
                             <h2 class="text-2xl font-bold text-gray-800">Create Your Account</h2>
                         </div>
 
-@@ -216,6 +215,7 @@ <h2 class="text-2xl font-bold text-gray-800">Create Your Account</h2>
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input type="text" id="username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter username" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-id-card text-gray-400"></i>
+                                </div>
+                                <input type="text" id="fullname" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter full name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" id="email" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter email address" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="form" class="block text-sm font-medium text-gray-700 mb-1">Form</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-layer-group text-gray-400"></i>
+                                </div>
+                                <select id="form" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" required>
+                                    <option value="">Select your form</option>
+                                    <option value="form1">Form 1</option>
+                                    <option value="form2">Form 2</option>
+                                    <option value="form3">Form 3</option>
+                                    <option value="form4">Form 4</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                            <div class="flex gap-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" value="male" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500" required>
+                                    <span class="ml-2 text-gray-700"><i class="fas fa-mars mr-1"></i> Male</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" value="female" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500" required>
+                                    <span class="ml-2 text-gray-700"><i class="fas fa-venus mr-1"></i> Female</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="zeraki-check" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500">
+                                <label for="zeraki-check" class="ml-2 block text-sm text-gray-700">
+                                    My school is recognized by Zeraki Learning
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="zeraki-fields" class="hidden space-y-4 pl-6 border-l-2 border-emerald-200 mt-2 mb-4">
+                            <div>
+                                <label for="zeraki-username" class="block text-sm font-medium text-gray-700 mb-1">Zeraki Username</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-at text-gray-400"></i>
+                                    </div>
+                                    <input type="text" id="zeraki-username" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter Zeraki username">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="zeraki-password" class="block text-sm font-medium text-gray-700 mb-1">Zeraki Password</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-key text-gray-400"></i>
+                                    </div>
+                                    <input type="password" id="zeraki-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter Zeraki password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
                                 </div>
                                 <input type="password" id="password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Enter password" required>
                             </div>
@@ -178,7 +287,20 @@
                         </div>
 
                         <div class="mb-6">
-@@ -236,68 +236,24 @@ <h2 class="text-2xl font-bold text-gray-800">Create Your Account</h2>
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="confirm-password" class="input-highlight pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500" placeholder="Confirm password" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-user-plus mr-2"></i> Create Account
+                        </button>
+                    </form>
+
                     <div class="mt-4 text-center text-sm text-gray-600">
                         Already have an account? <button class="switch-to-login text-emerald-600 font-medium hover:underline">Log in here</button>
                     </div>
@@ -254,7 +376,50 @@
     <script>
         // Tab switching functionality
         const signupTab = document.getElementById('signup-tab');
-@@ -348,37 +304,15 @@ <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
+        const loginTab = document.getElementById('login-tab');
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+
+        signupTab.addEventListener('click', () => {
+            signupTab.classList.add('text-emerald-600', 'border-emerald-600');
+            signupTab.classList.remove('text-gray-500', 'border-transparent');
+            loginTab.classList.add('text-gray-500', 'border-transparent');
+            loginTab.classList.remove('text-emerald-600', 'border-emerald-600');
+            signupForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+        });
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('text-emerald-600', 'border-emerald-600');
+            loginTab.classList.remove('text-gray-500', 'border-transparent');
+            signupTab.classList.add('text-gray-500', 'border-transparent');
+            signupTab.classList.remove('text-emerald-600', 'border-emerald-600');
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+        });
+
+        // Quick switch links
+        document.querySelectorAll('.switch-to-login').forEach(btn => {
+            btn.addEventListener('click', () => {
+                loginTab.click();
+            });
+        });
+
+        document.querySelectorAll('.switch-to-signup').forEach(btn => {
+            btn.addEventListener('click', () => {
+                signupTab.click();
+            });
+        });
+
+        // Zeraki checkbox toggle
+        const zerakiCheck = document.getElementById('zeraki-check');
+        const zerakiFields = document.getElementById('zeraki-fields');
+
+        zerakiCheck.addEventListener('change', () => {
+            if (zerakiCheck.checked) {
+                zerakiFields.classList.remove('hidden');
+            } else {
+                zerakiFields.classList.add('hidden');
             }
         });
 
