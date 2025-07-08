@@ -8,10 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -227,15 +223,15 @@
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
                         <div class="grid grid-cols-2 gap-3">
-                            <button class="flex items-center justify-center p-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
+                            <button onclick="showSection('books', event)" class="flex items-center justify-center p-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
                                 <i class="fas fa-book mr-2"></i>
                                 <span>Books</span>
                             </button>
-                            <button class="flex items-center justify-center p-3 rounded-lg bg-green-50 text-green-600 hover:bg-green-100">
+                            <button onclick="showSection('test-papers', event)" class="flex items-center justify-center p-3 rounded-lg bg-green-50 text-green-600 hover:bg-green-100">
                                 <i class="fas fa-file-alt mr-2"></i>
                                 <span>Tests</span>
                             </button>
-                            <button class="flex items-center justify-center p-3 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100">
+                            <button onclick="showSection('zeraki', event)" class="flex items-center justify-center p-3 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100">
                                 <i class="fas fa-chart-line mr-2"></i>
                                 <span>Analytics</span>
                             </button>
@@ -314,8 +310,13 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
     <script>
-        // Firebase configuration - replace with your actual config
+        // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_AUTH_DOMAIN",
@@ -331,53 +332,45 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // Global variables
-        let currentUser = null;
-
         // DOM Elements
         const loadingOverlay = document.getElementById('loading-overlay');
         const dashboardContainer = document.getElementById('dashboard-container');
         const redirectLoginBtn = document.getElementById('redirect-login');
 
-        // Initialize the dashboard when the page loads
+        // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initializeDashboard();
         });
 
-        // Initialize dashboard
         async function initializeDashboard() {
             try {
                 // Check authentication state
-                currentUser = await checkAuthState();
+                const user = await checkAuthState();
                 
-                if (!currentUser) {
-                    showError("Not authenticated. Redirecting to login...");
-                    setTimeout(() => {
-                        window.location.href = "login.html";
-                    }, 2000);
+                if (!user) {
+                    console.log("No authenticated user, redirecting to login");
+                    window.location.href = "login.html";
                     return;
                 }
 
                 // Load user data
-                await loadUserData(currentUser.uid);
+                await loadUserData(user.uid);
                 
-                // Initialize UI components
+                // Initialize UI
                 setupDashboardUI();
-                
-                // Initialize chart
                 initPerformanceChart();
                 
-                // Hide loading overlay and show dashboard
-                loadingOverlay.style.display = 'none';
-                dashboardContainer.classList.remove('hidden');
-                
+                // Show dashboard
+                hideLoading();
+
             } catch (error) {
-                showError("Failed to initialize dashboard: " + error.message);
+                console.error("Dashboard initialization failed:", error);
+                showError("Failed to load dashboard. Please try again.");
                 redirectLoginBtn.classList.remove('hidden');
             }
         }
 
-        // Check authentication state
+        // Check auth state
         function checkAuthState() {
             return new Promise((resolve, reject) => {
                 const unsubscribe = auth.onAuthStateChanged(user => {
@@ -394,15 +387,15 @@
             });
         }
 
-        // Load user data from database
+        // Load user data
         async function loadUserData(userId) {
             try {
                 const snapshot = await database.ref('users/' + userId).once('value');
                 const userData = snapshot.val();
                 
                 if (userData) {
-                    // Update profile information
-                    document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
+                    // Update profile info
+                    document.getElementById('profile-name').textContent = userData.fullName || 'User';
                     document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
                     document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
                     document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
@@ -420,7 +413,7 @@
             }
         }
 
-        // Initialize dashboard UI components
+        // Setup UI interactions
         function setupDashboardUI() {
             // Sidebar toggle
             document.getElementById('toggleSidebar').addEventListener('click', function() {
@@ -432,19 +425,15 @@
                 document.querySelector('.sidebar').classList.toggle('hidden');
             });
 
-            // Logout functionality
+            // Logout
             document.querySelector('.logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
-                auth.signOut()
-                    .then(() => {
-                        window.location.href = "login.html";
-                    })
-                    .catch(error => {
-                        showError("Logout failed: " + error.message);
-                    });
+                auth.signOut().then(() => {
+                    window.location.href = "login.html";
+                });
             });
 
-            // Redirect to login button
+            // Redirect to login if needed
             redirectLoginBtn.addEventListener('click', function() {
                 window.location.href = "login.html";
             });
@@ -478,6 +467,20 @@
             });
         }
 
+        // Show dashboard
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+            dashboardContainer.classList.remove('hidden');
+        }
+
+        // Show error
+        function showError(message) {
+            const errorElement = document.createElement('p');
+            errorElement.className = 'text-red-500 mt-2';
+            errorElement.textContent = message;
+            loadingOverlay.appendChild(errorElement);
+        }
+
         // Section navigation
         function showSection(sectionId, event) {
             if (event) event.preventDefault();
@@ -490,10 +493,11 @@
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
             
-            // Update UI states
+            // Update section title
             const title = document.querySelector(`#${sectionId} h1`)?.textContent || 'Dashboard';
             document.getElementById('current-section-title').textContent = title;
             
+            // Update active nav item
             document.querySelectorAll('nav a').forEach(link => {
                 link.classList.remove('bg-green-600');
             });
@@ -501,15 +505,6 @@
             if (event?.currentTarget) {
                 event.currentTarget.classList.add('bg-green-600');
             }
-        }
-
-        // Show error message
-        function showError(message) {
-            console.error(message);
-            const errorElement = document.createElement('p');
-            errorElement.className = 'text-red-500 mt-2';
-            errorElement.textContent = message;
-            loadingOverlay.appendChild(errorElement);
         }
     </script>
 </body>
