@@ -57,7 +57,7 @@
                             <i class="fas fa-book mr-3 text-gray-500"></i>
                             Books
                         </a>
-                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900" onclick="showTestPapers()">
                             <i class="fas fa-file-alt mr-3 text-gray-500"></i>
                             Test Papers
                         </a>
@@ -254,6 +254,58 @@
                         <h2 class="text-xl font-semibold mb-4">Your Selected Subjects</h2>
                         <div id="selected-subjects" class="flex flex-wrap gap-2">
                             <p class="text-gray-500">No subjects selected yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Papers Section (Hidden by default) -->
+                <div id="testpapers-section" class="hidden">
+                    <div class="green-gradient rounded-lg p-6 mb-6 text-white">
+                        <h1 class="text-2xl font-bold mb-2">Test Papers</h1>
+                        <p>Practice with past papers and mock exams to prepare for your tests.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Select Form Level</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <button onclick="showTestSubjects('form1')" class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out hover:bg-gray-50">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-50 text-blue-600 mb-2 mx-auto">
+                                    <span class="font-bold">F1</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900 text-center">Form 1</h3>
+                            </button>
+                            <button onclick="showTestSubjects('form2')" class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out hover:bg-gray-50">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-50 text-green-600 mb-2 mx-auto">
+                                    <span class="font-bold">F2</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900 text-center">Form 2</h3>
+                            </button>
+                            <button onclick="showTestSubjects('form3')" class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out hover:bg-gray-50">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-yellow-50 text-yellow-600 mb-2 mx-auto">
+                                    <span class="font-bold">F3</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900 text-center">Form 3</h3>
+                            </button>
+                            <button onclick="showTestSubjects('form4')" class="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out hover:bg-gray-50">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-red-50 text-red-600 mb-2 mx-auto">
+                                    <span class="font-bold">F4</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900 text-center">Form 4</h3>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="test-subjects" class="hidden bg-white rounded-lg shadow p-6 mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Select Subject</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <!-- Subjects will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div id="test-papers-list" class="hidden bg-white rounded-lg shadow p-6">
+                        <h2 class="text-xl font-semibold mb-4">Available Papers</h2>
+                        <div class="space-y-4">
+                            <!-- Papers will be populated by JavaScript -->
                         </div>
                     </div>
                 </div>
@@ -623,6 +675,97 @@
             document.getElementById('home-section').classList.add('hidden');
             document.getElementById('profile-section').classList.add('hidden');
             document.getElementById('books-section').classList.remove('hidden');
+            document.getElementById('testpapers-section').classList.add('hidden');
+        }
+
+        // Show test papers section
+        function showTestPapers() {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('books-section').classList.add('hidden');
+            document.getElementById('testpapers-section').classList.remove('hidden');
+            
+            // Reset view to form selection
+            document.getElementById('test-subjects').classList.add('hidden');
+            document.getElementById('test-papers-list').classList.add('hidden');
+        }
+
+        // Show subjects for selected form
+        function showTestSubjects(formLevel) {
+            const subjectsContainer = document.getElementById('test-subjects');
+            subjectsContainer.innerHTML = `
+                <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="showTestPapersList('${formLevel}', 'Mathematics')">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-50 text-green-600 mb-2 mx-auto">
+                        <i class="fas fa-square-root-alt"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-center">Mathematics</h3>
+                </div>
+                <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="showTestPapersList('${formLevel}', 'English')">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-50 text-blue-600 mb-2 mx-auto">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-center">English</h3>
+                </div>
+                <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="showTestPapersList('${formLevel}', 'Kiswahili')">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-yellow-50 text-yellow-600 mb-2 mx-auto">
+                        <i class="fas fa-globe-africa"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-center">Kiswahili</h3>
+                </div>
+                <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="showTestPapersList('${formLevel}', 'Biology')">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-red-50 text-red-600 mb-2 mx-auto">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-center">Biology</h3>
+                </div>
+                <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="showTestPapersList('${formLevel}', 'Chemistry')">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-purple-50 text-purple-600 mb-2 mx-auto">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-center">Chemistry</h3>
+                </div>
+                <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="showTestPapersList('${formLevel}', 'Physics')">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-50 text-indigo-600 mb-2 mx-auto">
+                        <i class="fas fa-meteor"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-center">Physics</h3>
+                </div>
+            `;
+            
+            document.getElementById('test-subjects').classList.remove('hidden');
+        }
+
+        // Show available test papers for selected subject
+        function showTestPapersList(formLevel, subject) {
+            const papersContainer = document.getElementById('test-papers-list');
+            papersContainer.innerHTML = `
+                <h2 class="text-xl font-semibold mb-4">${subject} Papers (Form ${formLevel.charAt(formLevel.length-1)})</h2>
+                <div class="space-y-4">
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="openTestPaper('${formLevel}', '${subject}', 'Term 1 Exam 2023')">
+                        <h3 class="font-medium">Term 1 Exam 2023</h3>
+                        <p class="text-sm text-gray-500">30 questions | 1 hour 30 minutes</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="openTestPaper('${formLevel}', '${subject}', 'Mid Term Exam 2023')">
+                        <h3 class="font-medium">Mid Term Exam 2023</h3>
+                        <p class="text-sm text-gray-500">20 questions | 1 hour</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="openTestPaper('${formLevel}', '${subject}', 'End Term Exam 2022')">
+                        <h3 class="font-medium">End Term Exam 2022</h3>
+                        <p class="text-sm text-gray-500">40 questions | 2 hours</p>
+                    </div>
+                </div>
+                <button class="mt-4 text-green-600 hover:text-green-800" onclick="document.getElementById('test-papers-list').classList.add('hidden')">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Subjects
+                </button>
+            `;
+            
+            document.getElementById('test-papers-list').classList.remove('hidden');
+        }
+
+        // Open selected test paper
+        function openTestPaper(formLevel, subject, paperName) {
+            alert(`Opening ${paperName} for ${subject} (Form ${formLevel.charAt(formLevel.length-1)})\n\nThis would navigate to the actual test paper in a real implementation.`);
+            // In a real implementation, this would load the test paper content
         }
         
         // Show home section
