@@ -8,6 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -44,10 +48,45 @@
         .content-section.active {
             display: block;
         }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #10b981;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
-    <div class="flex h-screen overflow-hidden">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="text-gray-700">Loading dashboard...</p>
+        <button id="redirect-login" class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hidden">
+            Go to Login Page
+        </button>
+    </div>
+
+    <div class="flex h-screen overflow-hidden hidden" id="dashboard-container">
         <!-- Sidebar -->
         <div class="sidebar bg-green-700 text-white w-64 flex-shrink-0">
             <div class="p-4 flex items-center justify-between border-b border-green-600">
@@ -275,145 +314,203 @@
         </div>
     </div>
 
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+    <script>
+        // Firebase configuration - replace with your actual config
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-<!-- Dashboard Scripts -->
-<script>
-    // Immediately check auth state when page loads
-    (async function initializeDashboard() {
-        try {
-            // Wait for auth state to resolve
-            const user = await new Promise((resolve) => {
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Global variables
+        let currentUser = null;
+
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const redirectLoginBtn = document.getElementById('redirect-login');
+
+        // Initialize the dashboard when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            try {
+                // Check authentication state
+                currentUser = await checkAuthState();
+                
+                if (!currentUser) {
+                    showError("Not authenticated. Redirecting to login...");
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 2000);
+                    return;
+                }
+
+                // Load user data
+                await loadUserData(currentUser.uid);
+                
+                // Initialize UI components
+                setupDashboardUI();
+                
+                // Initialize chart
+                initPerformanceChart();
+                
+                // Hide loading overlay and show dashboard
+                loadingOverlay.style.display = 'none';
+                dashboardContainer.classList.remove('hidden');
+                
+            } catch (error) {
+                showError("Failed to initialize dashboard: " + error.message);
+                redirectLoginBtn.classList.remove('hidden');
+            }
+        }
+
+        // Check authentication state
+        function checkAuthState() {
+            return new Promise((resolve, reject) => {
                 const unsubscribe = auth.onAuthStateChanged(user => {
                     unsubscribe();
-                    resolve(user);
+                    if (user) {
+                        resolve(user);
+                    } else {
+                        resolve(null);
+                    }
+                }, error => {
+                    unsubscribe();
+                    reject(error);
                 });
             });
-
-            if (!user) {
-                console.log("No authenticated user, redirecting to login");
-                window.location.href = "login.html";
-                return;
-            }
-
-            // User is authenticated - load dashboard
-            console.log("User authenticated:", user.uid);
-            await loadUserData(user.uid);
-            setupDashboardUI();
-            
-            // Initialize chart
-            initPerformanceChart();
-
-        } catch (error) {
-            console.error("Dashboard initialization failed:", error);
-            window.location.href = "login.html";
         }
-    })();
 
-    // Load user data from database
-    async function loadUserData(userId) {
-        try {
-            const snapshot = await database.ref('users/' + userId).once('value');
-            const userData = snapshot.val();
-            
-            if (userData) {
-                // Update profile information
-                document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
-                document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
-                document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
-                document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
+        // Load user data from database
+        async function loadUserData(userId) {
+            try {
+                const snapshot = await database.ref('users/' + userId).once('value');
+                const userData = snapshot.val();
                 
-                // Update avatar
-                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=10b981&color=fff`;
-                document.getElementById('user-avatar').src = avatarUrl;
-                document.getElementById('profile-avatar').src = avatarUrl;
-            }
-        } catch (error) {
-            console.error("Error loading user data:", error);
-            throw error;
-        }
-    }
-
-    // Initialize dashboard UI components
-    function setupDashboardUI() {
-        // Sidebar toggle
-        document.getElementById('toggleSidebar').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-        });
-
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('hidden');
-        });
-
-        // Logout functionality
-        document.querySelector('.logout-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            auth.signOut()
-                .then(() => {
-                    window.location.href = "login.html";
-                })
-                .catch(error => {
-                    console.error("Logout failed:", error);
-                });
-        });
-    }
-
-    // Initialize performance chart
-    function initPerformanceChart() {
-        const ctx = document.getElementById('progressChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Performance',
-                    data: [65, 59, 70, 71, 76, 78],
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: false, min: 50, max: 100 }
+                if (userData) {
+                    // Update profile information
+                    document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
+                    document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
+                    document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
+                    document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
+                    document.getElementById('profile-school').textContent = userData.school || 'Not specified';
+                    
+                    // Update avatar
+                    const avatarUrl = userData.photoURL || 
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=10b981&color=fff`;
+                    document.getElementById('user-avatar').src = avatarUrl;
+                    document.getElementById('profile-avatar').src = avatarUrl;
                 }
+            } catch (error) {
+                console.error("Error loading user data:", error);
+                throw error;
             }
-        });
-    }
-
-    // Section navigation
-    function showSection(sectionId, event) {
-        if (event) event.preventDefault();
-        
-        // Hide all sections
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Show selected section
-        document.getElementById(sectionId).classList.add('active');
-        
-        // Update UI states
-        const title = document.querySelector(`#${sectionId} h1`)?.textContent || 'Dashboard';
-        document.getElementById('current-section-title').textContent = title;
-        
-        document.querySelectorAll('nav a').forEach(link => {
-            link.classList.remove('bg-green-600');
-        });
-        
-        if (event?.currentTarget) {
-            event.currentTarget.classList.add('bg-green-600');
         }
-    }
-</script>
+
+        // Initialize dashboard UI components
+        function setupDashboardUI() {
+            // Sidebar toggle
+            document.getElementById('toggleSidebar').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('collapsed');
+            });
+
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('hidden');
+            });
+
+            // Logout functionality
+            document.querySelector('.logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                auth.signOut()
+                    .then(() => {
+                        window.location.href = "login.html";
+                    })
+                    .catch(error => {
+                        showError("Logout failed: " + error.message);
+                    });
+            });
+
+            // Redirect to login button
+            redirectLoginBtn.addEventListener('click', function() {
+                window.location.href = "login.html";
+            });
+        }
+
+        // Initialize performance chart
+        function initPerformanceChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Performance',
+                        data: [65, 59, 70, 71, 76, 78],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 50, max: 100 }
+                    }
+                }
+            });
+        }
+
+        // Section navigation
+        function showSection(sectionId, event) {
+            if (event) event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update UI states
+            const title = document.querySelector(`#${sectionId} h1`)?.textContent || 'Dashboard';
+            document.getElementById('current-section-title').textContent = title;
+            
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('bg-green-600');
+            });
+            
+            if (event?.currentTarget) {
+                event.currentTarget.classList.add('bg-green-600');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            console.error(message);
+            const errorElement = document.createElement('p');
+            errorElement.className = 'text-red-500 mt-2';
+            errorElement.textContent = message;
+            loadingOverlay.appendChild(errorElement);
+        }
+    </script>
 </body>
 </html>
