@@ -3,802 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lambda Studies Center - Dashboard</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
-    
-    <!-- UI Libraries -->
+    <title>Dashboard | Lambda Studies Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
-    
     <style>
         body {
             font-family: 'Poppins', sans-serif;
         }
-        .sidebar-item:hover {
-            background-color: rgba(22, 163, 74, 0.1);
+        .sidebar {
+            transition: all 0.3s ease;
         }
-        .sidebar-item.active {
-            background-color: rgba(22, 163, 74, 0.2);
-            border-left: 4px solid #16a34a;
+        .sidebar.collapsed {
+            width: 70px;
         }
-        .subject-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        .sidebar.collapsed .nav-text {
+            display: none;
         }
-        .book-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        .main-content {
+            transition: all 0.3s ease;
         }
-        .cart-item:hover {
-            background-color: rgba(22, 163, 74, 0.05);
+        .sidebar.collapsed + .main-content {
+            margin-left: 70px;
         }
-        [x-cloak] { display: none !important; }
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <div class="hidden md:flex md:flex-shrink-0">
-            <div class="flex flex-col w-64 bg-white border-r border-gray-200">
-                <div class="flex items-center justify-center h-16 px-4 bg-green-600">
-                    <div class="flex items-center">
-                        <i class="fas fa-graduation-cap text-white text-2xl mr-2"></i>
-                        <span class="text-white font-bold text-xl">Lambda Studies</span>
+        <div class="sidebar bg-green-700 text-white w-64 flex-shrink-0">
+            <div class="p-4 flex items-center justify-between border-b border-green-600">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                        <i class="fas fa-atom text-white"></i>
                     </div>
+                    <span class="ml-3 font-semibold text-lg nav-text">Lambda Studies</span>
                 </div>
-                <div class="p-4 border-b border-gray-200">
-                    <div class="flex items-center">
-                        <img id="user-avatar" class="w-10 h-10 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
-                        <div class="ml-3">
-                            <p id="username-display" class="text-sm font-medium text-gray-900">Loading...</p>
-                            <p class="text-xs font-medium text-gray-500">Student</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
-                    <div class="space-y-1">
-                        <a href="#home" class="sidebar-item active flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-home mr-3 text-green-600"></i>
-                            Home
-                        </a>
-                        <a href="#books" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-book mr-3 text-green-600"></i>
-                            Books
-                        </a>
-                        <a href="https://quiz.learning.zeraki.co.ke/#/login" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-laptop-code mr-3 text-green-600"></i>
-                            Zeraki
-                        </a>
-                        <a href="#test-papers" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-file-alt mr-3 text-green-600"></i>
-                            Test Papers
-                        </a>
-                        <a href="#test-yourself" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-question-circle mr-3 text-green-600"></i>
-                            Test Yourself
-                        </a>
-                        <a href="#about" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-info-circle mr-3 text-green-600"></i>
-                            About
-                        </a>
-                        <a href="#logout" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-sign-out-alt mr-3 text-green-600"></i>
-                            Logout
-                        </a>
-                    </div>
-                </div>
+                <button id="toggleSidebar" class="text-white focus:outline-none">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
+            <nav class="p-4">
+                <ul>
+                    <li class="mb-2">
+                        <a href="#" onclick="showSection('dashboard', event)" class="flex items-center p-3 rounded-lg bg-green-600 text-white">
+                            <i class="fas fa-home"></i>
+                            <span class="nav-text ml-3">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" onclick="showSection('books', event)" class="flex items-center p-3 rounded-lg hover:bg-green-600 text-white">
+                            <i class="fas fa-book"></i>
+                            <span class="nav-text ml-3">Books</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" onclick="showSection('test-papers', event)" class="flex items-center p-3 rounded-lg hover:bg-green-600 text-white">
+                            <i class="fas fa-file-alt"></i>
+                            <span class="nav-text ml-3">Test Papers</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" onclick="showSection('zeraki', event)" class="flex items-center p-3 rounded-lg hover:bg-green-600 text-white">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="nav-text ml-3">Zeraki Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="logout-btn flex items-center p-3 rounded-lg hover:bg-green-600 text-white">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="nav-text ml-3">Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
-        <!-- Mobile sidebar -->
-        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
-            <div class="flex justify-around">
-                <a href="#home" class="flex flex-col items-center justify-center p-3 text-green-600">
-                    <i class="fas fa-home"></i>
-                    <span class="text-xs mt-1">Home</span>
-                </a>
-                <a href="#books" class="flex flex-col items-center justify-center p-3 text-gray-500">
-                    <i class="fas fa-book"></i>
-                    <span class="text-xs mt-1">Books</span>
-                </a>
-                <a href="#test-yourself" class="flex flex-col items-center justify-center p-3 text-gray-500">
-                    <i class="fas fa-question-circle"></i>
-                    <span class="text-xs mt-1">Test</span>
-                </a>
-                <a href="#logout" class="flex flex-col items-center justify-center p-3 text-gray-500">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="text-xs mt-1">Logout</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Main content -->
-        <div class="flex flex-col flex-1 overflow-hidden">
-            <!-- Top navigation -->
-            <div class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200">
-                <div class="flex items-center md:hidden">
-                    <button class="text-gray-500 focus:outline-none">
-                        <i class="fas fa-bars"></i>
+        <!-- Main Content -->
+        <div class="main-content flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <div class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="mobile-menu-toggle" class="mr-4 md:hidden">
+                        <i class="fas fa-bars text-gray-600"></i>
                     </button>
+                    <h1 id="current-section-title" class="text-xl font-semibold text-gray-800">Dashboard</h1>
                 </div>
                 <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
                     <div class="relative">
-                        <input type="text" class="w-full md:w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Search...">
-                        <div class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
+                        <img id="user-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full cursor-pointer" alt="User">
                     </div>
-                </div>
-                <div class="flex items-center">
-                    <button class="p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <button id="cart-btn" class="ml-2 p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none relative">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
-                    </button>
                 </div>
             </div>
 
-            <!-- Main content area -->
-            <div class="flex-1 overflow-auto p-4">
-                <!-- Home Section -->
-                <section id="home" class="mb-8">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-user-circle text-green-600 mr-2"></i>
-                            Student Profile
-                        </h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Profile Card -->
-                            <div class="bg-white rounded-lg shadow p-6 col-span-1">
-                                <div class="flex flex-col items-center">
-                                    <img id="profile-avatar" class="w-24 h-24 rounded-full mb-4" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
-                                    <h3 id="profile-name" class="text-xl font-bold text-gray-800">Loading...</h3>
-                                    <p id="profile-grade" class="text-gray-600 mb-2">Loading...</p>
-                                    <div class="flex space-x-2 mb-4">
-                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Active</span>
-                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Premium</span>
-                                    </div>
-                                    <div class="w-full border-t border-gray-200 my-4"></div>
-                                    <div class="grid grid-cols-2 gap-4 w-full">
-                                        <div class="text-center">
-                                            <p class="text-gray-500 text-sm">Courses</p>
-                                            <p class="font-bold text-green-600">8</p>
-                                        </div>
-                                        <div class="text-center">
-                                            <p class="text-gray-500 text-sm">Tests Taken</p>
-                                            <p class="font-bold text-green-600">24</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Performance Graph -->
-                            <div class="bg-white rounded-lg shadow p-6 col-span-2">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                    <i class="fas fa-chart-line text-green-600 mr-2"></i>
-                                    Performance Trend
-                                </h3>
-                                <div class="h-64">
-                                    <canvas id="performanceChart"></canvas>
-                                </div>
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <!-- Student Profile Card -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <img id="profile-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" class="w-16 h-16 rounded-full mr-4" alt="Student">
+                            <div>
+                                <h2 id="profile-name" class="text-xl font-semibold">Loading...</h2>
+                                <p id="profile-form" class="text-gray-500">Loading...</p>
                             </div>
                         </div>
-                        
-                        <!-- Subjects Section -->
-                        <div class="mt-8">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-book-open text-green-600 mr-2"></i>
-                                Available Subjects
-                            </h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                <!-- Subjects will be loaded dynamically -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Form</p>
+                                <p id="profile-form-value" class="font-medium">Loading...</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Gender</p>
+                                <p id="profile-gender" class="font-medium">Loading...</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">School</p>
+                                <p id="profile-school" class="font-medium">Loading...</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Status</p>
+                                <p class="font-medium text-green-600">Active</p>
                             </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- Books Section -->
-                <section id="books" class="mb-8 hidden">
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-book text-green-600 mr-2"></i>
-                            Book Store
-                        </h2>
-                        
-                        <!-- Book Categories -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-3">Categories</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <button class="category-btn active px-4 py-2 bg-green-600 text-white rounded-full text-sm" data-category="all">All Books</button>
-                                <button class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm" data-category="math">Mathematics</button>
-                                <button class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm" data-category="science">Science</button>
-                                <button class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm" data-category="humanities">Humanities</button>
-                                <button class="category-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm" data-category="languages">Languages</button>
+                    <!-- Performance Summary -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-lg font-semibold mb-4">Performance Summary</h2>
+                        <div class="mb-4">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Overall Progress</span>
+                                <span class="text-sm font-medium">78%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
                             </div>
                         </div>
-                        
-                        <!-- Book Search -->
-                        <div class="mb-6">
-                            <div class="relative max-w-md">
-                                <input type="text" id="book-search" class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Search books...">
-                                <div class="absolute left-0 inset-y-0 flex items-center pl-3">
-                                    <i class="fas fa-search text-gray-400"></i>
-                                </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Best Subject</p>
+                                <p class="font-medium">Mathematics</p>
+                                <p class="text-sm text-green-500">92%</p>
                             </div>
-                        </div>
-                        
-                        <!-- Books Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="books-container">
-                            <!-- Books will be loaded here -->
+                            <div>
+                                <p class="text-sm text-gray-500">Needs Improvement</p>
+                                <p class="font-medium">Chemistry</p>
+                                <p class="text-sm text-red-500">65%</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Average Score</p>
+                                <p class="font-medium">78%</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Rank</p>
+                                <p class="font-medium">12/120</p>
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- Shopping Cart Sidebar -->
-                <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-20">
-                    <div class="flex flex-col h-full">
-                        <div class="flex items-center justify-between p-4 border-b border-gray-200">
-                            <h3 class="text-lg font-bold text-gray-800">
-                                <i class="fas fa-shopping-cart text-green-600 mr-2"></i>
-                                Your Cart
-                            </h3>
-                            <button id="close-cart" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times"></i>
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex items-center justify-center p-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
+                                <i class="fas fa-book mr-2"></i>
+                                <span>Books</span>
                             </button>
-                        </div>
-                        
-                        <div class="flex-1 overflow-y-auto p-4" id="cart-items">
-                            <!-- Cart items will be loaded here -->
-                            <div class="text-center text-gray-500 py-10">
-                                <i class="fas fa-shopping-cart text-4xl mb-2"></i>
-                                <p>Your cart is empty</p>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-200">
-                            <div class="flex justify-between mb-2">
-                                <span class="font-medium">Subtotal:</span>
-                                <span id="cart-subtotal" class="font-bold">KSh 0</span>
-                            </div>
-                            <div class="flex justify-between mb-4">
-                                <span class="font-medium">Delivery:</span>
-                                <span id="cart-delivery" class="font-bold">KSh 200</span>
-                            </div>
-                            <div class="flex justify-between text-lg font-bold text-green-600 mb-4">
-                                <span>Total:</span>
-                                <span id="cart-total">KSh 200</span>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <h4 class="font-medium mb-2">Payment Method</h4>
-                                <div class="space-y-2">
-                                    <label class="flex items-center space-x-2">
-                                        <input type="radio" name="payment-method" value="mpesa" checked class="text-green-600">
-                                        <span>M-Pesa</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="radio" name="payment-method" value="card" class="text-green-600">
-                                        <span>Credit/Debit Card</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="radio" name="payment-method" value="bank" class="text-green-600">
-                                        <span>Bank Transfer</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="radio" name="payment-method" value="cash" class="text-green-600">
-                                        <span>Cash on Delivery</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <button id="checkout-btn" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition duration-200">
-                                Proceed to Checkout
+                            <button class="flex items-center justify-center p-3 rounded-lg bg-green-50 text-green-600 hover:bg-green-100">
+                                <i class="fas fa-file-alt mr-2"></i>
+                                <span>Tests</span>
+                            </button>
+                            <button class="flex items-center justify-center p-3 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100">
+                                <i class="fas fa-chart-line mr-2"></i>
+                                <span>Analytics</span>
+                            </button>
+                            <button class="flex items-center justify-center p-3 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100">
+                                <i class="fas fa-cog mr-2"></i>
+                                <span>Settings</span>
                             </button>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Overlay -->
-                <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden"></div>
 
-                <!-- [Rest of your sections (Test Papers, etc.) remain exactly the same] -->
-            </div>
+                <!-- Progress Graph -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold">Performance Trend</h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-600">Monthly</button>
+                            <button class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-600">Quarterly</button>
+                            <button class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-600">Yearly</button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-book text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Completed Mathematics Chapter 3</p>
+                                <p class="text-sm text-gray-500">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-file-alt text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Submitted Chemistry Test</p>
+                                <p class="text-sm text-gray-500">1 day ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Books Section -->
+            <section id="books" class="content-section p-6">
+                <h1 class="text-2xl font-bold text-gray-800 mb-6">Book Store</h1>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <p>Books content will appear here</p>
+                </div>
+            </section>
+
+            <!-- Test Papers Section -->
+            <section id="test-papers" class="content-section p-6">
+                <h1 class="text-2xl font-bold text-gray-800 mb-6">Test Papers</h1>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <p>Test papers will appear here</p>
+                </div>
+            </section>
+
+            <!-- Zeraki Analytics Section -->
+            <section id="zeraki" class="content-section p-6">
+                <h1 class="text-2xl font-bold text-gray-800 mb-6">Zeraki Analytics</h1>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <p>Zeraki analytics will appear here</p>
+                </div>
+            </section>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Auth and Database Logic -->
+    <script src="auth.js"></script>
+    <script src="database.js"></script>
+    
+    <!-- Dashboard Scripts -->
     <script>
-        // Initialize Firebase
-        const auth = firebase.auth();
-        const database = firebase.database();
-
-        // Check authentication state
+        // Check authentication state when dashboard loads
         auth.onAuthStateChanged((user) => {
             if (!user) {
-                // User is not logged in, redirect to login page
-                window.location.href = "index.html";
+                // User not logged in, redirect to login
+                window.location.href = "login.html";
             } else {
                 // User is logged in, load their data
                 loadUserData(user.uid);
-                setupLogout();
-                loadBooks();
-                setupCart();
+                initializeDashboard();
             }
         });
 
-        // Load user data from Firebase
+        // Load user data
         function loadUserData(userId) {
-            database.ref('users/' + userId).once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                
-                // Update UI with user data
-                document.getElementById('username-display').textContent = userData.username || 'Student';
-                document.getElementById('profile-name').textContent = userData.fullName || 'Student';
-                document.getElementById('profile-grade').textContent = userData.form ? `Form ${userData.form.charAt(userData.form.length-1)} Student` : 'Student';
-                
-                // Generate avatar based on gender if available
-                if (userData.gender) {
-                    const avatarUrl = userData.gender === 'female' ? 
-                        'https://randomuser.me/api/portraits/women/32.jpg' : 
-                        'https://randomuser.me/api/portraits/men/32.jpg';
-                    document.getElementById('user-avatar').src = avatarUrl;
-                    document.getElementById('profile-avatar').src = avatarUrl;
-                }
-                
-                // Load subjects based on form
-                if (userData.form) {
-                    loadSubjects(userData.form);
-                }
-            }).catch((error) => {
-                console.error("Error loading user data:", error);
-            });
-        }
-
-        // Load subjects based on form level
-        function loadSubjects(formLevel) {
-            const subjectsContainer = document.querySelector('#home .grid.grid-cols-2');
-            const subjects = [
-                { name: 'Mathematics', icon: 'square-root-alt' },
-                { name: 'English', icon: 'language' },
-                { name: 'Kiswahili', icon: 'globe-africa' },
-                { name: 'Biology', icon: 'dna' },
-                { name: 'Physics', icon: 'atom' },
-                { name: 'Chemistry', icon: 'flask' },
-                { name: 'CRE', icon: 'church' },
-                { name: 'Geography', icon: 'globe-americas' },
-                { name: 'History', icon: 'landmark' },
-                { name: 'Business Studies', icon: 'chart-line' },
-                { name: 'Computer Studies', icon: 'laptop-code' },
-                { name: 'Agriculture', icon: 'tractor' },
-                { name: 'Home Science', icon: 'home' },
-                { name: 'French', icon: 'flag' }
-            ];
-
-            subjectsContainer.innerHTML = subjects.map(subject => `
-                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
-                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                        <i class="fas fa-${subject.icon} text-green-600 text-2xl"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-800">${subject.name}</h4>
-                </div>
-            `).join('');
-        }
-
-        // Setup logout functionality
-        function setupLogout() {
-            document.querySelectorAll('[href="#logout"]').forEach(element => {
-                element.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (confirm('Are you sure you want to logout?')) {
-                        auth.signOut().then(() => {
-                            window.location.href = "index.html";
-                        });
+            database.ref('users/' + userId).once('value')
+                .then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        // Update profile information
+                        document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
+                        document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form.substring(4)}` : 'Not specified';
+                        document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form.substring(4)}` : 'Not specified';
+                        document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
+                        
+                        // Update avatar
+                        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=10b981&color=fff`;
+                        document.getElementById('user-avatar').src = avatarUrl;
+                        document.getElementById('profile-avatar').src = avatarUrl;
                     }
+                })
+                .catch((error) => {
+                    console.error("Error loading user data:", error);
                 });
-            });
         }
 
-        // Book Store Functionality
-        function loadBooks() {
-            const books = [
-                { 
-                    id: 1,
-                    title: 'Mathematics KLB Book 1', 
-                    author: 'KLB Publishers', 
-                    price: 700, 
-                    category: 'math',
-                    image: 'https://m.media-amazon.com/images/I/51Z+Qy8z+ZL._SY425_.jpg'
-                },
-                { 
-                    id: 2,
-                    title: 'Mathematics KLB Book 2', 
-                    author: 'KLB Publishers', 
-                    price: 700, 
-                    category: 'math',
-                    image: 'https://m.media-amazon.com/images/I/51Z+Qy8z+ZL._SY425_.jpg'
-                },
-                { 
-                    id: 3,
-                    title: 'Mathematics KLB Book 3', 
-                    author: 'KLB Publishers', 
-                    price: 700, 
-                    category: 'math',
-                    image: 'https://m.media-amazon.com/images/I/51Z+Qy8z+ZL._SY425_.jpg'
-                },
-                { 
-                    id: 4,
-                    title: 'Mathematics KLB Book 4', 
-                    author: 'KLB Publishers', 
-                    price: 700, 
-                    category: 'math',
-                    image: 'https://m.media-amazon.com/images/I/51Z+Qy8z+ZL._SY425_.jpg'
-                },
-                { 
-                    id: 5,
-                    title: 'Chemistry KLB', 
-                    author: 'KLB Publishers', 
-                    price: 650, 
-                    category: 'science',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 6,
-                    title: 'Biology Made Familiar', 
-                    author: 'Longhorn Publishers', 
-                    price: 750, 
-                    category: 'science',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 7,
-                    title: 'Physics Simplified', 
-                    author: 'Oxford Publishers', 
-                    price: 800, 
-                    category: 'science',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 8,
-                    title: 'English Grammar', 
-                    author: 'Longhorn Publishers', 
-                    price: 600, 
-                    category: 'languages',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 9,
-                    title: 'Kiswahili Fasaha', 
-                    author: 'KLB Publishers', 
-                    price: 550, 
-                    category: 'languages',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 10,
-                    title: 'History & Government', 
-                    author: 'Longhorn Publishers', 
-                    price: 650, 
-                    category: 'humanities',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 11,
-                    title: 'Geography Made Easy', 
-                    author: 'Oxford Publishers', 
-                    price: 700, 
-                    category: 'humanities',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                },
-                { 
-                    id: 12,
-                    title: 'Business Studies', 
-                    author: 'KLB Publishers', 
-                    price: 600, 
-                    category: 'humanities',
-                    image: 'https://m.media-amazon.com/images/I/51Q5ZQZQZJL._SY425_.jpg'
-                }
-            ];
-
-            const booksContainer = document.getElementById('books-container');
-            booksContainer.innerHTML = books.map(book => `
-                <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300" data-category="${book.category}">
-                    <div class="h-48 bg-gray-100 flex items-center justify-center">
-                        <img src="${book.image}" alt="${book.title}" class="h-full object-contain">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-800 mb-1">${book.title}</h3>
-                        <p class="text-sm text-gray-600 mb-2">${book.author}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-green-600">KSh ${book.price}</span>
-                            <button class="add-to-cart px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition" data-id="${book.id}" data-title="${book.title}" data-price="${book.price}">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Setup category filtering
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active', 'bg-green-600', 'text-white'));
-                    this.classList.add('active', 'bg-green-600', 'text-white');
-                    
-                    const category = this.dataset.category;
-                    document.querySelectorAll('.book-card').forEach(card => {
-                        if (category === 'all' || card.dataset.category === category) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            });
-
-            // Setup search functionality
-            document.getElementById('book-search').addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                document.querySelectorAll('.book-card').forEach(card => {
-                    const title = card.querySelector('h3').textContent.toLowerCase();
-                    const author = card.querySelector('p').textContent.toLowerCase();
-                    if (title.includes(searchTerm) || author.includes(searchTerm)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        }
-
-        // Shopping Cart Functionality
-        function setupCart() {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            
-            // Update cart count
-            function updateCartCount() {
-                const count = cart.reduce((total, item) => total + item.quantity, 0);
-                const cartCount = document.getElementById('cart-count');
-                cartCount.textContent = count;
-                count > 0 ? cartCount.classList.remove('hidden') : cartCount.classList.add('hidden');
-            }
-            
-            // Update cart UI
-            function updateCartUI() {
-                const cartItemsContainer = document.getElementById('cart-items');
-                const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-                const delivery = 200;
-                const total = subtotal + delivery;
-                
-                document.getElementById('cart-subtotal').textContent = `KSh ${subtotal}`;
-                document.getElementById('cart-total').textContent = `KSh ${total}`;
-                
-                if (cart.length === 0) {
-                    cartItemsContainer.innerHTML = `
-                        <div class="text-center text-gray-500 py-10">
-                            <i class="fas fa-shopping-cart text-4xl mb-2"></i>
-                            <p>Your cart is empty</p>
-                        </div>
-                    `;
-                } else {
-                    cartItemsContainer.innerHTML = cart.map(item => `
-                        <div class="cart-item flex items-center justify-between p-3 mb-2 rounded-lg transition">
-                            <div class="flex items-center">
-                                <img src="https://m.media-amazon.com/images/I/51Z+Qy8z+ZL._SY425_.jpg" alt="${item.title}" class="w-12 h-12 object-contain mr-3">
-                                <div>
-                                    <h4 class="font-medium text-gray-800">${item.title}</h4>
-                                    <p class="text-sm text-gray-600">KSh ${item.price}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center">
-                                <button class="decrease-quantity px-2 py-1 bg-gray-200 rounded" data-id="${item.id}">
-                                    <i class="fas fa-minus text-xs"></i>
-                                </button>
-                                <span class="mx-2">${item.quantity}</span>
-                                <button class="increase-quantity px-2 py-1 bg-gray-200 rounded" data-id="${item.id}">
-                                    <i class="fas fa-plus text-xs"></i>
-                                </button>
-                                <button class="remove-item ml-3 text-red-500" data-id="${item.id}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-                    
-                    // Add event listeners to quantity buttons
-                    document.querySelectorAll('.increase-quantity').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const id = parseInt(this.dataset.id);
-                            const item = cart.find(item => item.id === id);
-                            if (item) {
-                                item.quantity++;
-                                localStorage.setItem('cart', JSON.stringify(cart));
-                                updateCartUI();
-                                updateCartCount();
-                            }
-                        });
-                    });
-                    
-                    document.querySelectorAll('.decrease-quantity').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const id = parseInt(this.dataset.id);
-                            const itemIndex = cart.findIndex(item => item.id === id);
-                            if (itemIndex !== -1) {
-                                if (cart[itemIndex].quantity > 1) {
-                                    cart[itemIndex].quantity--;
-                                } else {
-                                    cart.splice(itemIndex, 1);
-                                }
-                                localStorage.setItem('cart', JSON.stringify(cart));
-                                updateCartUI();
-                                updateCartCount();
-                            }
-                        });
-                    });
-                    
-                    document.querySelectorAll('.remove-item').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const id = parseInt(this.dataset.id);
-                            cart = cart.filter(item => item.id !== id);
-                            localStorage.setItem('cart', JSON.stringify(cart));
-                            updateCartUI();
-                            updateCartCount();
-                        });
-                    });
-                }
-            }
-            
-            // Add to cart functionality
-            document.querySelectorAll('.add-to-cart').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.dataset.id);
-                    const title = this.dataset.title;
-                    const price = parseInt(this.dataset.price);
-                    
-                    const existingItem = cart.find(item => item.id === id);
-                    if (existingItem) {
-                        existingItem.quantity++;
-                    } else {
-                        cart.push({ id, title, price, quantity: 1 });
-                    }
-                    
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    updateCartCount();
-                    
-                    // Show notification
-                    const notification = document.createElement('div');
-                    notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center';
-                    notification.innerHTML = `
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <span>${title} added to cart</span>
-                    `;
-                    document.body.appendChild(notification);
-                    setTimeout(() => {
-                        notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-                        setTimeout(() => notification.remove(), 300);
-                    }, 2000);
-                });
-            });
-            
-            // Cart toggle
-            document.getElementById('cart-btn').addEventListener('click', function() {
-                document.getElementById('cart-sidebar').classList.remove('translate-x-full');
-                document.getElementById('overlay').classList.remove('hidden');
-                updateCartUI();
-            });
-            
-            document.getElementById('close-cart').addEventListener('click', function() {
-                document.getElementById('cart-sidebar').classList.add('translate-x-full');
-                document.getElementById('overlay').classList.add('hidden');
-            });
-            
-            document.getElementById('overlay').addEventListener('click', function() {
-                document.getElementById('cart-sidebar').classList.add('translate-x-full');
-                this.classList.add('hidden');
-            });
-            
-            // Checkout functionality
-            document.getElementById('checkout-btn').addEventListener('click', function() {
-                if (cart.length === 0) {
-                    alert('Your cart is empty!');
-                    return;
-                }
-                
-                const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 200;
-                
-                // In a real app, you would process payment here
-                alert(`Order placed successfully!\nPayment Method: ${paymentMethod}\nTotal: KSh ${total}`);
-                
-                // Clear cart
-                cart = [];
-                localStorage.setItem('cart', JSON.stringify(cart));
-                updateCartUI();
-                updateCartCount();
-                
-                // Close cart
-                document.getElementById('cart-sidebar').classList.add('translate-x-full');
-                document.getElementById('overlay').classList.add('hidden');
-            });
-            
-            // Initialize cart count
-            updateCartCount();
-        }
-
-        // Initialize charts and navigation
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show home section by default
-            document.querySelector('#home').classList.remove('hidden');
-            
-            // Handle sidebar navigation
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-            sidebarItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all items
-                    sidebarItems.forEach(i => i.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Hide all sections
-                    document.querySelectorAll('section').forEach(section => {
-                        section.classList.add('hidden');
-                    });
-                    
-                    // Show the selected section
-                    const target = this.getAttribute('href');
-                    document.querySelector(target).classList.remove('hidden');
-                });
-            });
-            
-            // Handle mobile navigation
-            document.querySelectorAll('[href^="#"]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.getAttribute('href') === '#books') {
-                        e.preventDefault();
-                        document.querySelectorAll('section').forEach(section => {
-                            section.classList.add('hidden');
-                        });
-                        document.querySelector('#books').classList.remove('hidden');
-                    }
-                });
-            });
-            
-            // Performance Chart
-            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(performanceCtx, {
+        // Initialize dashboard components
+        function initializeDashboard() {
+            // Initialize chart
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [{
-                        label: 'Average Score',
-                        data: [65, 59, 70, 71, 66, 75, 80, 78, 82, 85, 88, 90],
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        label: 'Performance',
+                        data: [65, 59, 70, 71, 76, 78],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
+                        tension: 0.3,
+                        fill: true
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
                     scales: {
                         y: {
                             beginAtZero: false,
@@ -808,7 +354,53 @@
                     }
                 }
             });
-        });
+
+            // Sidebar toggle
+            document.getElementById('toggleSidebar').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('collapsed');
+            });
+
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('hidden');
+            });
+
+            // Logout functionality
+            document.querySelector('.logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                auth.signOut()
+                    .then(() => {
+                        window.location.href = "login.html";
+                    });
+            });
+        }
+
+        // Show section function
+        function showSection(sectionId, event) {
+            if (event) event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show the selected section
+            const section = document.getElementById(sectionId);
+            section.classList.add('active');
+            
+            // Update section title
+            const title = section.querySelector('h1')?.textContent || 'Dashboard';
+            document.getElementById('current-section-title').textContent = title;
+            
+            // Update active nav item
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('bg-green-600');
+            });
+            
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('bg-green-600');
+            }
+        }
     </script>
 </body>
 </html>
