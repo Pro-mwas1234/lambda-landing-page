@@ -275,132 +275,145 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
-    
-    <!-- Firebase Configuration -->
-    <script src="firebase-config.js"></script>
-    
-    <!-- Auth and Database Logic -->
-    <script src="auth.js"></script>
-    <script src="database.js"></script>
-    
-    <!-- Dashboard Scripts -->
-    <script>
-        // Check authentication state when dashboard loads
-        auth.onAuthStateChanged((user) => {
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
+<!-- Dashboard Scripts -->
+<script>
+    // Immediately check auth state when page loads
+    (async function initializeDashboard() {
+        try {
+            // Wait for auth state to resolve
+            const user = await new Promise((resolve) => {
+                const unsubscribe = auth.onAuthStateChanged(user => {
+                    unsubscribe();
+                    resolve(user);
+                });
+            });
+
             if (!user) {
-                // User not logged in, redirect to login
+                console.log("No authenticated user, redirecting to login");
                 window.location.href = "login.html";
-            } else {
-                // User is logged in, load their data
-                loadUserData(user.uid);
-                initializeDashboard();
+                return;
             }
+
+            // User is authenticated - load dashboard
+            console.log("User authenticated:", user.uid);
+            await loadUserData(user.uid);
+            setupDashboardUI();
+            
+            // Initialize chart
+            initPerformanceChart();
+
+        } catch (error) {
+            console.error("Dashboard initialization failed:", error);
+            window.location.href = "login.html";
+        }
+    })();
+
+    // Load user data from database
+    async function loadUserData(userId) {
+        try {
+            const snapshot = await database.ref('users/' + userId).once('value');
+            const userData = snapshot.val();
+            
+            if (userData) {
+                // Update profile information
+                document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
+                document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
+                document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form}` : 'Not specified';
+                document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
+                
+                // Update avatar
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=10b981&color=fff`;
+                document.getElementById('user-avatar').src = avatarUrl;
+                document.getElementById('profile-avatar').src = avatarUrl;
+            }
+        } catch (error) {
+            console.error("Error loading user data:", error);
+            throw error;
+        }
+    }
+
+    // Initialize dashboard UI components
+    function setupDashboardUI() {
+        // Sidebar toggle
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
         });
 
-        // Load user data
-        function loadUserData(userId) {
-            database.ref('users/' + userId).once('value')
-                .then((snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData) {
-                        // Update profile information
-                        document.getElementById('profile-name').textContent = userData.fullName || 'Not provided';
-                        document.getElementById('profile-form').textContent = userData.form ? `Form ${userData.form.substring(4)}` : 'Not specified';
-                        document.getElementById('profile-form-value').textContent = userData.form ? `Form ${userData.form.substring(4)}` : 'Not specified';
-                        document.getElementById('profile-gender').textContent = userData.gender || 'Not specified';
-                        
-                        // Update avatar
-                        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=10b981&color=fff`;
-                        document.getElementById('user-avatar').src = avatarUrl;
-                        document.getElementById('profile-avatar').src = avatarUrl;
-                    }
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+
+        // Logout functionality
+        document.querySelector('.logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            auth.signOut()
+                .then(() => {
+                    window.location.href = "login.html";
                 })
-                .catch((error) => {
-                    console.error("Error loading user data:", error);
+                .catch(error => {
+                    console.error("Logout failed:", error);
                 });
-        }
+        });
+    }
 
-        // Initialize dashboard components
-        function initializeDashboard() {
-            // Initialize chart
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [65, 59, 70, 71, 76, 78],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 50,
-                            max: 100
-                        }
-                    }
+    // Initialize performance chart
+    function initPerformanceChart() {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Performance',
+                    data: [65, 59, 70, 71, 76, 78],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: false, min: 50, max: 100 }
                 }
-            });
-
-            // Sidebar toggle
-            document.getElementById('toggleSidebar').addEventListener('click', function() {
-                document.querySelector('.sidebar').classList.toggle('collapsed');
-            });
-
-            // Mobile menu toggle
-            document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
-                document.querySelector('.sidebar').classList.toggle('hidden');
-            });
-
-            // Logout functionality
-            document.querySelector('.logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                auth.signOut()
-                    .then(() => {
-                        window.location.href = "login.html";
-                    });
-            });
-        }
-
-        // Show section function
-        function showSection(sectionId, event) {
-            if (event) event.preventDefault();
-            
-            // Hide all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Show the selected section
-            const section = document.getElementById(sectionId);
-            section.classList.add('active');
-            
-            // Update section title
-            const title = section.querySelector('h1')?.textContent || 'Dashboard';
-            document.getElementById('current-section-title').textContent = title;
-            
-            // Update active nav item
-            document.querySelectorAll('nav a').forEach(link => {
-                link.classList.remove('bg-green-600');
-            });
-            
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('bg-green-600');
             }
+        });
+    }
+
+    // Section navigation
+    function showSection(sectionId, event) {
+        if (event) event.preventDefault();
+        
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update UI states
+        const title = document.querySelector(`#${sectionId} h1`)?.textContent || 'Dashboard';
+        document.getElementById('current-section-title').textContent = title;
+        
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('bg-green-600');
+        });
+        
+        if (event?.currentTarget) {
+            event.currentTarget.classList.add('bg-green-600');
         }
-    </script>
+    }
+</script>
 </body>
 </html>
