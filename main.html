@@ -4,38 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lambda Studies Center - Dashboard</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
-    
-    <!-- UI Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Firebase Config -->
-    <script src="firebase-config.js"></script>
-    
     <style>
         body {
             font-family: 'Poppins', sans-serif;
         }
         .sidebar-item:hover {
-            background-color: rgba(22, 163, 74, 0.1);
+            background-color: rgba(22, 160, 133, 0.1);
         }
         .sidebar-item.active {
-            background-color: rgba(22, 163, 74, 0.2);
-            border-left: 4px solid #16a34a;
+            background-color: rgba(22, 160, 133, 0.2);
+            border-left: 4px solid #16a085;
         }
         .subject-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
         .book-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .green-gradient {
+            background: linear-gradient(135deg, #16a085 0%, #2ecc71 100%);
         }
     </style>
 </head>
@@ -43,51 +36,46 @@
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <div class="hidden md:flex md:flex-shrink-0">
-            <div class="flex flex-col w-64 bg-white border-r border-gray-200">
-                <div class="flex items-center justify-center h-16 px-4 bg-green-600">
+            <div class="flex flex-col w-64 border-r border-gray-200 bg-white">
+                <div class="flex items-center justify-center h-16 px-4 green-gradient">
                     <div class="flex items-center">
                         <i class="fas fa-graduation-cap text-white text-2xl mr-2"></i>
-                        <span class="text-white font-bold text-xl">Lambda Studies</span>
+                        <span class="text-white font-semibold text-lg">Lambda Studies</span>
                     </div>
                 </div>
-                <div class="p-4 border-b border-gray-200">
-                    <div class="flex items-center">
-                        <img id="user-avatar" class="w-10 h-10 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
-                        <div class="ml-3">
-                            <p id="username-display" class="text-sm font-medium text-gray-900">Loading...</p>
-                            <p class="text-xs font-medium text-gray-500">Student</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
-                    <div class="space-y-1">
-                        <a href="#home" class="sidebar-item active flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-home mr-3 text-green-600"></i>
+                <div class="flex flex-col flex-grow overflow-y-auto">
+                    <div class="mt-5 flex-1 px-2 space-y-1">
+                        <a href="#" class="sidebar-item active flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-home mr-3 text-gray-500"></i>
                             Home
                         </a>
-                        <a href="#books" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-book mr-3 text-green-600"></i>
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900" onclick="showProfile()">
+                            <i class="fas fa-user mr-3 text-gray-500"></i>
+                            Profile
+                        </a>
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900" onclick="showBooks()">
+                            <i class="fas fa-book mr-3 text-gray-500"></i>
                             Books
                         </a>
-                        <a href="https://quiz.learning.zeraki.co.ke/#/login" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-laptop-code mr-3 text-green-600"></i>
-                            Zeraki
-                        </a>
-                        <a href="#test-papers" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-file-alt mr-3 text-green-600"></i>
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-file-alt mr-3 text-gray-500"></i>
                             Test Papers
                         </a>
-                        <a href="#test-yourself" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-question-circle mr-3 text-green-600"></i>
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-chart-line mr-3 text-gray-500"></i>
+                            Zeraki Analytics
+                        </a>
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-question-circle mr-3 text-gray-500"></i>
                             Test Yourself
                         </a>
-                        <a href="#about" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-info-circle mr-3 text-green-600"></i>
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-info-circle mr-3 text-gray-500"></i>
                             About
                         </a>
-                        <a href="#logout" class="sidebar-item flex items-center px-2 py-3 text-sm font-medium rounded-md text-gray-900">
-                            <i class="fas fa-sign-out-alt mr-3 text-green-600"></i>
-                            Logout
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                            <i class="fas fa-sign-out-alt mr-3 text-gray-500"></i>
+                            Log Out
                         </a>
                     </div>
                 </div>
@@ -95,23 +83,23 @@
         </div>
 
         <!-- Mobile sidebar -->
-        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg z-10">
             <div class="flex justify-around">
-                <a href="#home" class="flex flex-col items-center justify-center p-3 text-green-600">
+                <a href="#" class="flex flex-col items-center justify-center p-3 text-green-600">
                     <i class="fas fa-home"></i>
                     <span class="text-xs mt-1">Home</span>
                 </a>
-                <a href="#books" class="flex flex-col items-center justify-center p-3 text-gray-500">
+                <a href="#" class="flex flex-col items-center justify-center p-3 text-gray-500" onclick="showProfile()">
+                    <i class="fas fa-user"></i>
+                    <span class="text-xs mt-1">Profile</span>
+                </a>
+                <a href="#" class="flex flex-col items-center justify-center p-3 text-gray-500" onclick="showBooks()">
                     <i class="fas fa-book"></i>
                     <span class="text-xs mt-1">Books</span>
                 </a>
-                <a href="#test-yourself" class="flex flex-col items-center justify-center p-3 text-gray-500">
-                    <i class="fas fa-question-circle"></i>
-                    <span class="text-xs mt-1">Test</span>
-                </a>
-                <a href="#logout" class="flex flex-col items-center justify-center p-3 text-gray-500">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="text-xs mt-1">Logout</span>
+                <a href="#" class="flex flex-col items-center justify-center p-3 text-gray-500">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span class="text-xs mt-1">More</span>
                 </a>
             </div>
         </div>
@@ -120,243 +108,687 @@
         <div class="flex flex-col flex-1 overflow-hidden">
             <!-- Top navigation -->
             <div class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200">
-                <div class="flex items-center md:hidden">
-                    <button class="text-gray-500 focus:outline-none">
+                <div class="flex items-center">
+                    <button class="md:hidden text-gray-500 focus:outline-none">
                         <i class="fas fa-bars"></i>
                     </button>
-                </div>
-                <div class="flex items-center">
-                    <div class="relative">
-                        <input type="text" class="w-full md:w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Search...">
-                        <div class="absolute left-0 inset-y-0 flex items-center pl-3">
+                    <div class="relative mx-4">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
+                        <input class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Search..." type="search">
                     </div>
                 </div>
                 <div class="flex items-center">
-                    <button class="p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none">
+                    <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500">
                         <i class="fas fa-bell"></i>
                     </button>
-                    <button class="ml-2 p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none">
-                        <i class="fas fa-envelope"></i>
-                    </button>
+                    <div class="ml-3 relative">
+                        <div>
+                            <button type="button" class="flex items-center max-w-xs rounded-full focus:outline-none focus:ring-2 focus:ring-green-500" id="user-menu" aria-expanded="false" aria-haspopup="true">
+                                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Main content area -->
             <div class="flex-1 overflow-auto p-4">
-                <!-- Home Section -->
-                <section id="home" class="mb-8">
+                <!-- Home Section (Default View) -->
+                <div id="home-section">
+                    <div class="green-gradient rounded-lg p-6 mb-6 text-white">
+                        <h1 class="text-2xl font-bold mb-2">Welcome to Lambda Studies Center</h1>
+                        <p class="mb-4">Your premier e-learning platform designed to help students excel in their academic journey. Access quality educational resources, interactive lessons, and personalized learning experiences.</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-users mr-2"></i>
+                            <span>Join over 10,000 students improving their grades with us</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Select Your Subjects (Max 9)</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <!-- Subject Cards -->
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-50 text-green-600 mb-2">
+                                    <i class="fas fa-square-root-alt text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Mathematics</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-50 text-blue-600 mb-2">
+                                    <i class="fas fa-language text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">English</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-yellow-50 text-yellow-600 mb-2">
+                                    <i class="fas fa-globe-africa text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Kiswahili</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-red-50 text-red-600 mb-2">
+                                    <i class="fas fa-dna text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Biology</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-purple-50 text-purple-600 mb-2">
+                                    <i class="fas fa-atom text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Chemistry</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-50 text-indigo-600 mb-2">
+                                    <i class="fas fa-meteor text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Physics</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-amber-50 text-amber-600 mb-2">
+                                    <i class="fas fa-landmark text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">History</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-50 text-emerald-600 mb-2">
+                                    <i class="fas fa-church text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">CRE</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-cyan-50 text-cyan-600 mb-2">
+                                    <i class="fas fa-mountain text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Geography</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-pink-50 text-pink-600 mb-2">
+                                    <i class="fas fa-chart-line text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Business Studies</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-rose-50 text-rose-600 mb-2">
+                                    <i class="fas fa-flag text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">French</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-violet-50 text-violet-600 mb-2">
+                                    <i class="fas fa-laptop-code text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Computer Studies</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-lime-50 text-lime-600 mb-2">
+                                    <i class="fas fa-tractor text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Agriculture</h3>
+                            </div>
+                            
+                            <div class="subject-card bg-white border border-gray-200 rounded-lg p-4 cursor-pointer transition duration-300 ease-in-out" onclick="selectSubject(this)">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-fuchsia-50 text-fuchsia-600 mb-2">
+                                    <i class="fas fa-music text-xl"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Music</h3>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-user-circle text-green-600 mr-2"></i>
-                            Student Profile
-                        </h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Profile Card -->
-                            <div class="bg-white rounded-lg shadow p-6 col-span-1">
-                                <div class="flex flex-col items-center">
-                                    <img id="profile-avatar" class="w-24 h-24 rounded-full mb-4" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User avatar">
-                                    <h3 id="profile-name" class="text-xl font-bold text-gray-800">Loading...</h3>
-                                    <p id="profile-grade" class="text-gray-600 mb-2">Loading...</p>
-                                    <div class="flex space-x-2 mb-4">
-                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Active</span>
-                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Premium</span>
-                                    </div>
-                                    <div class="w-full border-t border-gray-200 my-4"></div>
-                                    <div class="grid grid-cols-2 gap-4 w-full">
-                                        <div class="text-center">
-                                            <p class="text-gray-500 text-sm">Courses</p>
-                                            <p class="font-bold text-green-600">8</p>
+                        <h2 class="text-xl font-semibold mb-4">Your Selected Subjects</h2>
+                        <div id="selected-subjects" class="flex flex-wrap gap-2">
+                            <p class="text-gray-500">No subjects selected yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section (Hidden by default) -->
+                <div id="profile-section" class="hidden">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="green-gradient p-6 text-white">
+                            <div class="flex items-center">
+                                <img class="h-16 w-16 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                <div class="ml-4">
+                                    <h2 class="text-xl font-bold">John Doe</h2>
+                                    <p class="text-green-100">Student at Lambda Studies Center</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">Personal Information</h3>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">Age:</span>
+                                            <span>17 years</span>
                                         </div>
-                                        <div class="text-center">
-                                            <p class="text-gray-500 text-sm">Tests Taken</p>
-                                            <p class="font-bold text-green-600">24</p>
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">Gender:</span>
+                                            <span>Male</span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">Class:</span>
+                                            <span>Form 3</span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">School:</span>
+                                            <span>Nairobi High School</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">Academic Progress</h3>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">Average:</span>
+                                            <span class="font-medium">B (72%)</span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">Streak:</span>
+                                            <span>14 days</span>
+                                        </div>
+                                        <div class="flex">
+                                            <span class="text-gray-500 w-24">Hours:</span>
+                                            <span>42 hours this month</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Performance Graph -->
-                            <div class="bg-white rounded-lg shadow p-6 col-span-2">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                    <i class="fas fa-chart-line text-green-600 mr-2"></i>
-                                    Performance Trend
-                                </h3>
-                                <div class="h-64">
-                                    <canvas id="performanceChart"></canvas>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Performance Overview</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <canvas id="performanceChart" height="250"></canvas>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">Strengths</h3>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                                            <span>Mathematics (85%)</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                                            <span>Physics (80%)</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                                            <span>Chemistry (78%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">Areas to Improve</h3>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+                                            <span>English (62%)</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+                                            <span>History (58%)</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+                                            <span>Geography (65%)</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Subjects Section -->
-                        <div class="mt-8">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-book-open text-green-600 mr-2"></i>
-                                Available Subjects
-                            </h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                <!-- Subjects will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Books Section (Hidden by default) -->
+                <div id="books-section" class="hidden">
+                    <div class="green-gradient rounded-lg p-6 mb-6 text-white">
+                        <h1 class="text-2xl font-bold mb-2">Educational Books Store</h1>
+                        <p>Purchase high-quality textbooks and revision materials for your studies. All books are available in both print and digital formats.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xl font-semibold">Featured Books</h2>
+                            <div class="relative">
+                                <select class="block appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                    <option>Filter by Subject</option>
+                                    <option>Mathematics</option>
+                                    <option>English</option>
+                                    <option>Science</option>
+                                    <option>Humanities</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Book Cards -->
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="h-48 bg-green-50 flex items-center justify-center">
+                                    <img src="https://m.media-amazon.com/images/I/51xwGSNX-EL._SY425_.jpg" alt="KLB Mathematics Book 3" class="h-full object-contain">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-gray-900 mb-1">KLB Mathematics Book 3</h3>
+                                    <p class="text-sm text-gray-500 mb-2">Form 3 Secondary Mathematics</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-green-600">KSh 1,250</span>
+                                        <button class="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded" onclick="addToCart('KLB Mathematics Book 3', 1250)">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="h-48 bg-blue-50 flex items-center justify-center">
+                                    <img src="https://m.media-amazon.com/images/I/51xwGSNX-EL._SY425_.jpg" alt="Head Start English" class="h-full object-contain">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-gray-900 mb-1">Head Start English</h3>
+                                    <p class="text-sm text-gray-500 mb-2">Form 1-4 Comprehensive Guide</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-green-600">KSh 1,100</span>
+                                        <button class="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded" onclick="addToCart('Head Start English', 1100)">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="h-48 bg-red-50 flex items-center justify-center">
+                                    <img src="https://m.media-amazon.com/images/I/51xwGSNX-EL._SY425_.jpg" alt="Comprehensive Biology" class="h-full object-contain">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-gray-900 mb-1">Comprehensive Biology</h3>
+                                    <p class="text-sm text-gray-500 mb-2">Form 4 KCSE Revision</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-green-600">KSh 1,350</span>
+                                        <button class="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded" onclick="addToCart('Comprehensive Biology', 1350)">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="h-48 bg-yellow-50 flex items-center justify-center">
+                                    <img src="https://m.media-amazon.com/images/I/51xwGSNX-EL._SY425_.jpg" alt="KLB Chemistry Book 2" class="h-full object-contain">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-gray-900 mb-1">KLB Chemistry Book 2</h3>
+                                    <p class="text-sm text-gray-500 mb-2">Form 2 Secondary Chemistry</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-green-600">KSh 1,200</span>
+                                        <button class="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded" onclick="addToCart('KLB Chemistry Book 2', 1200)">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="h-48 bg-purple-50 flex items-center justify-center">
+                                    <img src="https://m.media-amazon.com/images/I/51xwGSNX-EL._SY425_.jpg" alt="Golden Tips Geography" class="h-full object-contain">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-gray-900 mb-1">Golden Tips Geography</h3>
+                                    <p class="text-sm text-gray-500 mb-2">Form 1-4 Revision Guide</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-green-600">KSh 950</span>
+                                        <button class="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded" onclick="addToCart('Golden Tips Geography', 950)">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="book-card bg-white rounded-lg shadow overflow-hidden transition duration-300 ease-in-out">
+                                <div class="h-48 bg-indigo-50 flex items-center justify-center">
+                                    <img src="https://m.media-amazon.com/images/I/51xwGSNX-EL._SY425_.jpg" alt="KLB Physics Book 4" class="h-full object-contain">
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-gray-900 mb-1">KLB Physics Book 4</h3>
+                                    <p class="text-sm text-gray-500 mb-2">Form 4 Secondary Physics</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-bold text-green-600">KSh 1,300</span>
+                                        <button class="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded" onclick="addToCart('KLB Physics Book 4', 1300)">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- [Rest of your sections (Books, Test Papers, etc.) remain exactly the same] -->
+                    <!-- Shopping Cart -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-xl font-semibold mb-4">Your Shopping Cart</h2>
+                        <div id="cart-items" class="mb-4">
+                            <p class="text-gray-500">Your cart is empty</p>
+                        </div>
+                        <div id="cart-total" class="hidden border-t border-gray-200 pt-4">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">Subtotal:</span>
+                                <span id="subtotal">KSh 0</span>
+                            </div>
+                            <div class="flex justify-between mb-4">
+                                <span class="font-medium">Total:</span>
+                                <span id="total" class="font-bold text-green-600">KSh 0</span>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="font-medium mb-2">Payment Method</h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button class="flex items-center justify-center p-3 border border-gray-300 rounded hover:border-green-500">
+                                        <i class="fab fa-cc-mastercard text-2xl text-gray-700 mr-2"></i>
+                                        <span>Card</span>
+                                    </button>
+                                    <button class="flex items-center justify-center p-3 border border-gray-300 rounded hover:border-green-500">
+                                        <i class="fas fa-mobile-alt text-2xl text-green-600 mr-2"></i>
+                                        <span>M-Pesa</span>
+                                    </button>
+                                    <button class="flex items-center justify-center p-3 border border-gray-300 rounded hover:border-green-500">
+                                        <i class="fab fa-paypal text-2xl text-blue-600 mr-2"></i>
+                                        <span>PayPal</span>
+                                    </button>
+                                    <button class="flex items-center justify-center p-3 border border-gray-300 rounded hover:border-green-500">
+                                        <i class="fas fa-university text-2xl text-gray-700 mr-2"></i>
+                                        <span>Bank</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-medium">
+                                Proceed to Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize Firebase
-        const auth = firebase.auth();
-        const database = firebase.database();
-
-        // Check authentication state
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                // User is not logged in, redirect to login page
-                window.location.href = "index.html";
+        // Track selected subjects
+        const selectedSubjects = [];
+        const maxSubjects = 9;
+        
+        // Track cart items
+        const cartItems = [];
+        
+        // Function to select a subject
+        function selectSubject(element) {
+            const subject = element.querySelector('h3').textContent;
+            
+            if (element.classList.contains('bg-green-50')) {
+                // Already selected, remove it
+                const index = selectedSubjects.indexOf(subject);
+                if (index > -1) {
+                    selectedSubjects.splice(index, 1);
+                }
+                element.classList.remove('bg-green-50', 'border-green-500');
+                element.classList.add('bg-white', 'border-gray-200');
             } else {
-                // User is logged in, load their data
-                loadUserData(user.uid);
-                setupLogout();
+                // Not selected yet, add it if we haven't reached max
+                if (selectedSubjects.length < maxSubjects) {
+                    selectedSubjects.push(subject);
+                    element.classList.remove('bg-white', 'border-gray-200');
+                    element.classList.add('bg-green-50', 'border-green-500');
+                } else {
+                    alert(`You can only select up to ${maxSubjects} subjects.`);
+                    return;
+                }
             }
-        });
-
-        // Load user data from Firebase
-        function loadUserData(userId) {
-            database.ref('users/' + userId).once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                
-                // Update UI with user data
-                document.getElementById('username-display').textContent = userData.username || 'Student';
-                document.getElementById('profile-name').textContent = userData.fullName || 'Student';
-                document.getElementById('profile-grade').textContent = userData.form ? `Form ${userData.form.charAt(userData.form.length-1)} Student` : 'Student';
-                
-                // Generate avatar based on gender if available
-                if (userData.gender) {
-                    const avatarUrl = userData.gender === 'female' ? 
-                        'https://randomuser.me/api/portraits/women/32.jpg' : 
-                        'https://randomuser.me/api/portraits/men/32.jpg';
-                    document.getElementById('user-avatar').src = avatarUrl;
-                    document.getElementById('profile-avatar').src = avatarUrl;
-                }
-                
-                // Load subjects based on form
-                if (userData.form) {
-                    loadSubjects(userData.form);
-                }
-            }).catch((error) => {
-                console.error("Error loading user data:", error);
+            
+            updateSelectedSubjectsDisplay();
+        }
+        
+        // Update the selected subjects display
+        function updateSelectedSubjectsDisplay() {
+            const container = document.getElementById('selected-subjects');
+            
+            if (selectedSubjects.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No subjects selected yet</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            selectedSubjects.forEach(subject => {
+                const badge = document.createElement('div');
+                badge.className = 'inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 border border-green-200';
+                badge.innerHTML = `
+                    <span>${subject}</span>
+                    <button class="ml-2 text-green-700 hover:text-green-900" onclick="removeSubject('${subject}')">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(badge);
             });
         }
-
-        // Load subjects based on form level
-        function loadSubjects(formLevel) {
-            const subjectsContainer = document.querySelector('#home .grid.grid-cols-2');
-            const subjects = [
-                { name: 'Mathematics', icon: 'square-root-alt' },
-                { name: 'English', icon: 'language' },
-                { name: 'Kiswahili', icon: 'globe-africa' },
-                { name: 'Biology', icon: 'dna' },
-                { name: 'Physics', icon: 'atom' },
-                { name: 'Chemistry', icon: 'flask' },
-                { name: 'CRE', icon: 'church' },
-                { name: 'Geography', icon: 'globe-americas' },
-                { name: 'History', icon: 'landmark' },
-                { name: 'Business Studies', icon: 'chart-line' },
-                { name: 'Computer Studies', icon: 'laptop-code' },
-                { name: 'Agriculture', icon: 'tractor' },
-                { name: 'Home Science', icon: 'home' },
-                { name: 'French', icon: 'flag' }
-            ];
-
-            subjectsContainer.innerHTML = subjects.map(subject => `
-                <div class="subject-card bg-white rounded-lg shadow p-4 text-center transition duration-300 ease-in-out">
-                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                        <i class="fas fa-${subject.icon} text-green-600 text-2xl"></i>
+        
+        // Remove a subject from selected
+        function removeSubject(subject) {
+            const index = selectedSubjects.indexOf(subject);
+            if (index > -1) {
+                selectedSubjects.splice(index, 1);
+            }
+            
+            // Update the subject cards
+            document.querySelectorAll('.subject-card').forEach(card => {
+                if (card.querySelector('h3').textContent === subject) {
+                    card.classList.remove('bg-green-50', 'border-green-500');
+                    card.classList.add('bg-white', 'border-gray-200');
+                }
+            });
+            
+            updateSelectedSubjectsDisplay();
+        }
+        
+        // Show profile section
+        function showProfile() {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('books-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.remove('hidden');
+            
+            // Initialize chart if not already done
+            if (!window.chartInitialized) {
+                initializePerformanceChart();
+                window.chartInitialized = true;
+            }
+        }
+        
+        // Show books section
+        function showBooks() {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('books-section').classList.remove('hidden');
+        }
+        
+        // Show home section
+        function showHome() {
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('books-section').classList.add('hidden');
+            document.getElementById('home-section').classList.remove('hidden');
+        }
+        
+        // Add item to cart
+        function addToCart(name, price) {
+            // Check if item already in cart
+            const existingItem = cartItems.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cartItems.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            updateCartDisplay();
+        }
+        
+        // Update cart display
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            
+            if (cartItems.length === 0) {
+                cartContainer.innerHTML = '<p class="text-gray-500">Your cart is empty</p>';
+                cartTotal.classList.add('hidden');
+                return;
+            }
+            
+            cartContainer.innerHTML = '';
+            let subtotal = 0;
+            
+            cartItems.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex justify-between items-center py-3 border-b border-gray-200';
+                cartItem.innerHTML = `
+                    <div>
+                        <h4 class="font-medium">${item.name}</h4>
+                        <p class="text-sm text-gray-500">KSh ${item.price.toLocaleString()}</p>
                     </div>
-                    <h4 class="font-bold text-gray-800">${subject.name}</h4>
-                </div>
-            `).join('');
-        }
-
-        // Setup logout functionality
-        function setupLogout() {
-            document.querySelectorAll('[href="#logout"]').forEach(element => {
-                element.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (confirm('Are you sure you want to logout?')) {
-                        auth.signOut().then(() => {
-                            window.location.href = "index.html";
-                        });
-                    }
-                });
-            });
-        }
-
-        // Initialize charts and navigation (your existing code)
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show home section by default
-            document.querySelector('#home').classList.remove('hidden');
-            
-            // Handle sidebar navigation
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-            sidebarItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all items
-                    sidebarItems.forEach(i => i.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Hide all sections
-                    document.querySelectorAll('section').forEach(section => {
-                        section.classList.add('hidden');
-                    });
-                    
-                    // Show the selected section
-                    const target = this.getAttribute('href');
-                    document.querySelector(target).classList.remove('hidden');
-                });
+                    <div class="flex items-center">
+                        <button class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center" onclick="updateCartItem('${item.name}', -1)">
+                            <i class="fas fa-minus text-xs"></i>
+                        </button>
+                        <span class="mx-2">${item.quantity}</span>
+                        <button class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center" onclick="updateCartItem('${item.name}', 1)">
+                            <i class="fas fa-plus text-xs"></i>
+                        </button>
+                        <span class="ml-4 font-medium">KSh ${itemTotal.toLocaleString()}</span>
+                    </div>
+                `;
+                cartContainer.appendChild(cartItem);
             });
             
-            // Performance Chart
-            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(performanceCtx, {
+            document.getElementById('subtotal').textContent = `KSh ${subtotal.toLocaleString()}`;
+            document.getElementById('total').textContent = `KSh ${subtotal.toLocaleString()}`;
+            cartTotal.classList.remove('hidden');
+        }
+        
+        // Update cart item quantity
+        function updateCartItem(name, change) {
+            const item = cartItems.find(item => item.name === name);
+            
+            if (item) {
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    // Remove item if quantity is 0
+                    const index = cartItems.indexOf(item);
+                    cartItems.splice(index, 1);
+                }
+            }
+            
+            updateCartDisplay();
+        }
+        
+        // Initialize performance chart
+        function initializePerformanceChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            const chart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                     datasets: [{
-                        label: 'Average Score',
-                        data: [65, 59, 70, 71, 66, 75, 80, 78, 82, 85, 88, 90],
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        label: 'Average Score (%)',
+                        data: [65, 59, 70, 68, 72, 75, 70, 74, 78, 80, 82, 85],
+                        backgroundColor: 'rgba(22, 160, 133, 0.1)',
+                        borderColor: '#16a085',
                         borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
+                        pointBackgroundColor: '#16a085',
+                        pointRadius: 4,
+                        tension: 0.3,
+                        fill: true
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: false,
                             min: 50,
-                            max: 100
+                            max: 100,
+                            ticks: {
+                                stepSize: 10
+                            }
                         }
                     }
                 }
+            });
+        }
+        
+        // Set up event listeners for sidebar navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Home button
+            document.querySelector('.sidebar-item.active').addEventListener('click', function(e) {
+                e.preventDefault();
+                showHome();
+                
+                // Update active state
+                document.querySelectorAll('.sidebar-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+            
+            // Other sidebar items
+            document.querySelectorAll('.sidebar-item:not(.active)').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active state
+                    document.querySelectorAll('.sidebar-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+            
+            // Mobile navigation
+            document.querySelectorAll('.md\\:hidden a').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (this.querySelector('i').classList.contains('fa-home')) {
+                        showHome();
+                    }
+                });
             });
         });
     </script>
