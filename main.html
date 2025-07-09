@@ -30,6 +30,12 @@
         .green-gradient {
             background: linear-gradient(135deg, #16a085 0%, #2ecc71 100%);
         }
+        .logo-text {
+            background: linear-gradient(to right, #16a085, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -37,10 +43,10 @@
         <!-- Sidebar -->
         <div class="hidden md:flex md:flex-shrink-0">
             <div class="flex flex-col w-64 border-r border-gray-200 bg-white">
-                <div class="flex items-center justify-center h-16 px-4 green-gradient">
+                <div class="flex items-center justify-center h-16 px-4">
                     <div class="flex items-center">
-                        <i class="fas fa-graduation-cap text-white text-2xl mr-2"></i>
-                        <span class="text-white font-semibold text-lg">Lambda Studies</span>
+                        <i class="fas fa-atom text-2xl mr-2 logo-text"></i>
+                        <span class="text-xl font-bold logo-text">λ Studies</span>
                     </div>
                 </div>
                 <div class="flex flex-col flex-grow overflow-y-auto">
@@ -69,7 +75,7 @@
                             <i class="fas fa-question-circle mr-3 text-gray-500"></i>
                             Test Yourself
                         </a>
-                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900">
+                        <a href="#" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-900" onclick="showAbout()">
                             <i class="fas fa-info-circle mr-3 text-gray-500"></i>
                             About
                         </a>
@@ -97,9 +103,9 @@
                     <i class="fas fa-book"></i>
                     <span class="text-xs mt-1">Books</span>
                 </a>
-                <a href="#" class="flex flex-col items-center justify-center p-3 text-gray-500">
-                    <i class="fas fa-ellipsis-h"></i>
-                    <span class="text-xs mt-1">More</span>
+                <a href="#" class="flex flex-col items-center justify-center p-3 text-gray-500" onclick="showAbout()">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="text-xs mt-1">About</span>
                 </a>
             </div>
         </div>
@@ -138,7 +144,7 @@
                 <!-- Home Section (Default View) -->
                 <div id="home-section">
                     <div class="green-gradient rounded-lg p-6 mb-6 text-white">
-                        <h1 class="text-2xl font-bold mb-2">Welcome to Lambda Studies Center</h1>
+                        <h1 class="text-2xl font-bold mb-2">Welcome to λ Studies Center</h1>
                         <p class="mb-4">Your premier e-learning platform designed to help students excel in their academic journey. Access quality educational resources, interactive lessons, and personalized learning experiences.</p>
                         <div class="flex items-center">
                             <i class="fas fa-users mr-2"></i>
@@ -318,7 +324,7 @@
                                 <img class="h-16 w-16 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
                                 <div class="ml-4">
                                     <h2 class="text-xl font-bold">John Doe</h2>
-                                    <p class="text-green-100">Student at Lambda Studies Center</p>
+                                    <p class="text-green-100">Student at λ Studies Center</p>
                                 </div>
                             </div>
                         </div>
@@ -577,6 +583,114 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- About Section (Hidden by default) -->
+                <div id="about-section" class="hidden">
+                    <div class="green-gradient rounded-lg p-6 mb-6 text-white">
+                        <h1 class="text-2xl font-bold mb-2">About λ Studies Center</h1>
+                        <p>Empowering the next generation of learners through innovative education technology</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <div class="flex flex-col md:flex-row gap-8">
+                            <div class="md:w-2/3">
+                                <h2 class="text-xl font-semibold mb-4">Our Mission</h2>
+                                <p class="mb-4 text-gray-700">At λ Studies Center, we believe that every student deserves access to quality education regardless of their location or economic background. Our platform bridges the gap between traditional classroom learning and digital education, providing comprehensive resources for Kenyan secondary school students.</p>
+                                
+                                <h2 class="text-xl font-semibold mb-4 mt-6">What We Offer</h2>
+                                <ul class="space-y-3 text-gray-700">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>Comprehensive digital textbooks and study materials</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>Thousands of past exam papers with detailed solutions</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>Personalized learning analytics to track progress</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>Interactive quizzes and self-assessment tools</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>Affordable printed materials available for delivery nationwide</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="md:w-1/3">
+                                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                    <h3 class="text-lg font-semibold mb-4 text-center">Our Impact</h3>
+                                    <div class="space-y-4">
+                                        <div class="text-center">
+                                            <div class="text-3xl font-bold text-green-600">10,000+</div>
+                                            <div class="text-gray-600">Active Students</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-3xl font-bold text-green-600">200+</div>
+                                            <div class="text-gray-600">Schools Partnered</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-3xl font-bold text-green-600">85%</div>
+                                            <div class="text-gray-600">Reported Grade Improvement</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-xl font-semibold mb-6 text-center">Meet The Development Team</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <div class="h-32 w-32 rounded-full mx-auto mb-4 overflow-hidden border-4 border-green-100">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="John Agostinelli" class="h-full w-full object-cover">
+                                </div>
+                                <h3 class="font-bold text-lg">John Agostinelli</h3>
+                                <p class="text-green-600 mb-2">Lead Developer</p>
+                                <p class="text-gray-600 text-sm">Full-stack developer with 8 years experience in educational technology solutions.</p>
+                                <div class="flex justify-center space-x-3 mt-3">
+                                    <a href="#" class="text-gray-500 hover:text-green-600"><i class="fab fa-github"></i></a>
+                                    <a href="#" class="text-gray-500 hover:text-blue-600"><i class="fab fa-linkedin"></i></a>
+                                    <a href="#" class="text-gray-500 hover:text-blue-400"><i class="fab fa-twitter"></i></a>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="h-32 w-32 rounded-full mx-auto mb-4 overflow-hidden border-4 border-green-100">
+                                    <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Shawn Mwangi" class="h-full w-full object-cover">
+                                </div>
+                                <h3 class="font-bold text-lg">Shawn Mwangi</h3>
+                                <p class="text-green-600 mb-2">UI/UX Designer</p>
+                                <p class="text-gray-600 text-sm">Creative designer specializing in intuitive user interfaces for educational platforms.</p>
+                                <div class="flex justify-center space-x-3 mt-3">
+                                    <a href="#" class="text-gray-500 hover:text-green-600"><i class="fab fa-github"></i></a>
+                                    <a href="#" class="text-gray-500 hover:text-blue-600"><i class="fab fa-linkedin"></i></a>
+                                    <a href="#" class="text-gray-500 hover:text-blue-400"><i class="fab fa-twitter"></i></a>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="h-32 w-32 rounded-full mx-auto mb-4 overflow-hidden border-4 border-green-100">
+                                    <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Emmanuel Nyakoe" class="h-full w-full object-cover">
+                                </div>
+                                <h3 class="font-bold text-lg">Emmanuel Nyakoe</h3>
+                                <p class="text-green-600 mb-2">Content Specialist</p>
+                                <p class="text-gray-600 text-sm">Education expert with deep knowledge of Kenyan secondary curriculum and exam preparation.</p>
+                                <div class="flex justify-center space-x-3 mt-3">
+                                    <a href="#" class="text-gray-500 hover:text-green-600"><i class="fab fa-github"></i></a>
+                                    <a href="#" class="text-gray-500 hover:text-blue-600"><i class="fab fa-linkedin"></i></a>
+                                    <a href="#" class="text-gray-500 hover:text-blue-400"><i class="fab fa-twitter"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -662,6 +776,8 @@
             document.getElementById('home-section').classList.add('hidden');
             document.getElementById('books-section').classList.add('hidden');
             document.getElementById('profile-section').classList.remove('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById('testpapers-section').classList.add('hidden');
             
             // Initialize chart if not already done
             if (!window.chartInitialized) {
@@ -675,6 +791,7 @@
             document.getElementById('home-section').classList.add('hidden');
             document.getElementById('profile-section').classList.add('hidden');
             document.getElementById('books-section').classList.remove('hidden');
+            document.getElementById('about-section').classList.add('hidden');
             document.getElementById('testpapers-section').classList.add('hidden');
         }
 
@@ -683,11 +800,21 @@
             document.getElementById('home-section').classList.add('hidden');
             document.getElementById('profile-section').classList.add('hidden');
             document.getElementById('books-section').classList.add('hidden');
+            document.getElementById('about-section').classList.add('hidden');
             document.getElementById('testpapers-section').classList.remove('hidden');
             
             // Reset view to form selection
             document.getElementById('test-subjects').classList.add('hidden');
             document.getElementById('test-papers-list').classList.add('hidden');
+        }
+
+        // Show about section
+        function showAbout() {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('books-section').classList.add('hidden');
+            document.getElementById('testpapers-section').classList.add('hidden');
+            document.getElementById('about-section').classList.remove('hidden');
         }
 
         // Show subjects for selected form
@@ -772,6 +899,8 @@
         function showHome() {
             document.getElementById('profile-section').classList.add('hidden');
             document.getElementById('books-section').classList.add('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById('testpapers-section').classList.add('hidden');
             document.getElementById('home-section').classList.remove('hidden');
         }
         
